@@ -6,6 +6,8 @@
 #define T 10
 
 typedef struct node{
+    /*inicialmente vamos utilizar somente um caracter no nome pra facilitar, depois nós implementamos strings*/
+    char nome;
     int n;  //número da chave
     int folha; //bool
     int chaves[2*T-1];  //limite superior
