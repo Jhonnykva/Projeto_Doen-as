@@ -1,4 +1,4 @@
-#include "Doenças.h"
+#include "Projeto_Doenças.h"
 
 Arvore_Doencas Busca(Arvore *a, int chave){//busca alguma chave
     int i=0;
