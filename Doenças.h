@@ -6,9 +6,8 @@
 
 #define MAX_NOME 25
 
-typedef struct struct_doenca
+typedef struct doenca
 {
-  /* data */
   unsigned int id;
   char nome[MAX_NOME];
   unsigned int n_sintomas;
