@@ -1,1 +1,1 @@
-#include "Projeto_Doenças.h"
+#include "Sintomas.h"
