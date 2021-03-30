@@ -18,7 +18,7 @@ A tabela hash vai ter relações para diferentes doenças, onde a árvore vai se
 
 ## Implementação
 
-- ###s Estrutura de Doenças
+- ### Estrutura de Doenças
 
 ```
     typedef struct doenca
