@@ -38,7 +38,8 @@ typedef struct nodo_doenca
 } Arvore_Doencas;
 
 Arvore_Doencas *cria_arvore_doencas();
-Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doença *doença);
+Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doenca *doenca);
 Arvore_Doencas Busca_Doenca(Arvore_Doencas *a, int chave);
 // void Remover_Doença(Arvore_Doencas *a, int chave);
 // Arvore_Doencas *Balacear_Arvore_Doenca(Arvore_Doencas *a);
+// int testaFolha(Arvore_Doencas *a);

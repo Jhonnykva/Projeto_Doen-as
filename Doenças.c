@@ -71,10 +71,10 @@ Arvore_Doencas Busca(Arvore_Doencas *a, int chave)
     // }
 }
 
-Arvore_Doencas *inserir_doenca(Arvore_Doencas **a, Doença *doenca){
+Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doença *doenca){
 /*
      if(a==NULL){
-        a= (Arvore_Doencas**)malloc(sizeof(Arvore_Doencas));
+        a= (Arvore_Doencas*)malloc(sizeof(Arvore_Doencas));//Não tenho certeza, talvez seja ponteiro de ponteiro
         a->chave=doenca->id;//trocar id por string futuramente
         a->folha=1;//é uma folha por enquanto
         for(int c=0; c<MAX_CHAVES; c++){
@@ -83,6 +83,9 @@ Arvore_Doencas *inserir_doenca(Arvore_Doencas **a, Doença *doenca){
         }
         return a;
     }
+    if(!testaFolha(a)){
+        a->folha=0;
+    }//Verifica se os filhos não NULL, se alguém deles não for então não é folha mais.
  
     int i=0, j=0, aux1, aux2;
     while((i<MAX_CHAVES) && (doenca->id > a->chaves[i])){
@@ -91,6 +94,8 @@ Arvore_Doencas *inserir_doenca(Arvore_Doencas **a, Doença *doenca){
     while(a->folha==0){
         inserir_doenca(a->filhos[i], doenca->id);
     }//desce até o último nível da árvore
+    //Obs: ao usar a recursão juntamente com o if(a==NULL), ele vai criando os filhos automaticamente,
+    //não tenho certeza, mas da forma que foi implementado talvez ele crie 1 filho a menos.
 
     //CASO 1 - árvore possui espaço para colocar folha
     if(a->chaves[MAX_CHAVES]==NULL){
@@ -108,5 +113,18 @@ Arvore_Doencas *inserir_doenca(Arvore_Doencas **a, Doença *doenca){
     }//testa se a subárvore não está cheia, vendo se há elemento na última posição das chaves
 
 
-    //CASO 2 - árvore possui espaço para colocar folha e necessita de um rearranjo*/
+    //CASO 2 - árvore não possui espaço para colocar folha e necessita de um rearranjo*/
+
+}
+
+int testaFolha(Arvore_Doencas *a){
+/*
+    for(int i=0;i<(2*T);i++){
+        if(a->filhos[i]!=NULL){
+            return 0;
+        }
+        
+    }
+    return 1;
+*/
 }
