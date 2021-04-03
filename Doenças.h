@@ -6,14 +6,14 @@
 
 #define MAX_NOME 25
 
-typedef struct doenca
+typedef struct doencas
 {
   unsigned int id;
   char nome[MAX_NOME];
   unsigned int n_sintomas;
   unsigned int *sintomas;
 
-} Doença;
+} Doenca;
 
 Doença *cria_doenca(unsigned int id, char *nome, unsigned int n_sintomas, unsigned int *sintomas);
 void elimina_doenca(Doença *doença);
