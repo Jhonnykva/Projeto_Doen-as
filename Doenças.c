@@ -71,20 +71,20 @@ Arvore_Doencas Busca(Arvore_Doencas *a, int chave)
     // }
 }
 
-Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doença *doenca){
+Arvore_Doencas *inserir_doenca(Arvore_Doencas **a, Doença *doenca){
 /*
      if(a==NULL){
-        a= (Arvore_Doencas*)malloc(sizeof(Arvore_Doencas));
+        a= (Arvore_Doencas**)malloc(sizeof(Arvore_Doencas));
         a->chave=doenca->id;//trocar id por string futuramente
         a->folha=1;//é uma folha por enquanto
-        for(int i=0; i<MAX_CHAVES; i++){
+        for(int c=0; c<MAX_CHAVES; c++){
             a->chaves[i]=NULL;//garante que  todos os ponteiros para 
                               //subárvores estejam nulos e prontos para uso
         }
         return a;
     }
  
-    int i=0, j=0;
+    int i=0, j=0, aux1, aux2;
     while((i<MAX_CHAVES) && (doenca->id > a->chaves[i])){
         i++;
     }//percorre até achar o ponto em que a doença deve ser inserida
@@ -94,7 +94,16 @@ Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doença *doenca){
 
     //CASO 1 - árvore possui espaço para colocar folha
     if(a->chaves[MAX_CHAVES]==NULL){
-
+        aux1=doenca->id;
+        while(i<MAX_CHAVES){
+            aux2=a->chaves[i];
+            a->chaves[i]=aux1;
+            aux1=aux2;
+            i++;
+        }//Coloca a chave no lugar certo.
+         //acredito que testar até MAX_CHAVES não dê problema porque setei inicialmente todos os 
+         //valores das chaves como nulo, porém não tenho certeza se posso colocar um inteiro como nulo em c
+         //qualquer coisa, é só trocar os "NULL" por 0 depois
 
     }//testa se a subárvore não está cheia, vendo se há elemento na última posição das chaves
 
