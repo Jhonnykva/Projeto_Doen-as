@@ -13,6 +13,7 @@ SRC = $(wildcard *.c)
 #Cria variável OBJ com todos os arquivos .o criados a partir de cada arquivo .c
 OBJ = $(SRC:.c=.o)
 
+CFLAGS =-g
 
 ######### Sintaxe ###########
 #regra: dependências
