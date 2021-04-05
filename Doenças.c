@@ -19,10 +19,10 @@ Doença *cria_doenca(unsigned int id, char *nome, unsigned int n_sintomas, unsig
     }
 
     Doença *doença = (Doença *)malloc(sizeof(Doença));
-    doença->id = id;
-    strcpy(doença->nome, nome); // Falta tratar o tamanho do nome
-    doença->n_sintomas = n_sintomas;
-    doença->sintomas = sintomas;
+    doenca->id = id;
+    strcpy(doenca->nome, nome); // Falta tratar o tamanho do nome
+    doenca->n_sintomas = n_sintomas;
+    doenca->sintomas = sintomas;
 
     return doença;
 }
@@ -204,4 +204,62 @@ Arvore_Doencas Busca(Arvore_Doencas *a, int chave)
     // {
     //     return Busca(a->filhos[i], k);
     // }
+}
+
+Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doença *doenca){
+/*
+     if(a==NULL){
+        a= (Arvore_Doencas*)malloc(sizeof(Arvore_Doencas));//Não tenho certeza, talvez seja ponteiro de ponteiro
+        a->chave=doenca->id;//trocar id por string futuramente
+        a->folha=1;//é uma folha por enquanto
+        for(int c=0; c<MAX_CHAVES; c++){
+            a->chaves[i]=NULL;//garante que  todos os ponteiros para 
+                              //subárvores estejam nulos e prontos para uso
+        }
+        return a;
+    }
+    if(!testaFolha(a)){
+        a->folha=0;
+    }//Verifica se os filhos não NULL, se alguém deles não for então não é folha mais.
+ 
+    int i=0, j=0, aux1, aux2;
+    while((i<MAX_CHAVES) && (doenca->id > a->chaves[i])){
+        i++;
+    }//percorre até achar o ponto em que a doença deve ser inserida
+    while(a->folha==0){
+        inserir_doenca(a->filhos[i], doenca->id);
+    }//desce até o último nível da árvore
+    //Obs: ao usar a recursão juntamente com o if(a==NULL), ele vai criando os filhos automaticamente,
+    //não tenho certeza, mas da forma que foi implementado talvez ele crie 1 filho a menos.
+
+    //CASO 1 - árvore possui espaço para colocar folha
+    if(a->chaves[MAX_CHAVES]==NULL){
+        aux1=doenca->id;
+        while(i<MAX_CHAVES){
+            aux2=a->chaves[i];
+            a->chaves[i]=aux1;
+            aux1=aux2;
+            i++;
+        }//Coloca a chave no lugar certo.
+         //acredito que testar até MAX_CHAVES não dê problema porque setei inicialmente todos os 
+         //valores das chaves como nulo, porém não tenho certeza se posso colocar um inteiro como nulo em c
+         //qualquer coisa, é só trocar os "NULL" por 0 depois
+
+    }//testa se a subárvore não está cheia, vendo se há elemento na última posição das chaves
+
+
+    //CASO 2 - árvore não possui espaço para colocar folha e necessita de um rearranjo*/
+
+}
+
+int testaFolha(Arvore_Doencas *a){
+/*
+    for(int i=0;i<(2*T);i++){
+        if(a->filhos[i]!=NULL){
+            return 0;
+        }
+        
+    }
+    return 1;
+*/
 }
