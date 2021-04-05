@@ -46,10 +46,9 @@ Arvore_Doencas *cria_arvore_doencas();
 Arvore_Doencas *inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
 
 No_Doencas *cria_no_arvore_doencas(int folha);
-No_Doencas *inserir_normal(Doenca *doenca, No_Doencas *a);
-No_Doencas *inserir_completo(Doenca *doenca, No_Doencas *a);
-No_Doencas *dividir_filho(int pos, No_Doencas *no, No_Doencas *filho);
-
+No_Doencas *inserir_no(Doenca *doenca, No_Doencas *a);
+void dividir_filho(int pos, No_Doencas *no, No_Doencas *filho);
+void imprime_arvore(No_Doencas *a, int h);
 Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
 // void Remover_Doença(Arvore_Doencas *a, int chave);
 // Arvore_Doencas *Balacear_Arvore_Doenca(Arvore_Doencas *a);
