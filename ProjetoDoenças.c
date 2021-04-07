@@ -13,10 +13,20 @@ int main(int argc, char **argv)
     {
         doenca = cria_doenca(ids[i], "Doenca", 3, &sintomas);
         // imprime_doenca(doenca);
-        a = inserir_doenca(doenca, a);
-        imprime_arvore(a->raiz, 0);
+        inserir_doenca(doenca, a);
+        // imprime_arvore(a->raiz, 0);
         printf("\n====== %d inserido ======\n", ids[i]);
     }
+    imprime_arvore(a->raiz, 0);
+    remover_doenca(a, 7);
+    printf("\n====== Removido 7 ======\n");
+    imprime_arvore(a->raiz, 0);
+    remover_doenca(a, 43);
+    printf("\n====== Removido 43 ======\n");
+    imprime_arvore(a->raiz, 0);
+    remover_doenca(a, 10);
+    printf("\n====== Removido 10 ======\n");
+    imprime_arvore(a->raiz, 0);
 
     elimina_doenca(doenca);
     return 0;

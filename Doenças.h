@@ -42,14 +42,27 @@ typedef struct arvore_doenca
   No_Doencas *raiz;
 } Arvore_Doencas;
 
+// Criação
 Arvore_Doencas *cria_arvore_doencas();
-Arvore_Doencas *inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
-
 No_Doencas *cria_no_arvore_doencas(int folha);
+// Inserção
+void inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
 No_Doencas *inserir_no(Doenca *doenca, No_Doencas *a);
 void dividir_filho(int pos, No_Doencas *no, No_Doencas *filho);
+// Remoção :(
+void remover_doenca(Arvore_Doencas *a, int id);
+void remover(int id, No_Doencas *a);
+void remover_de_interno(No_Doencas *a, int pos);
+void remover_de_folha(No_Doencas *a, int pos);
+void combinar_filhos(No_Doencas *a, int pos);
+void doador_direita(No_Doencas *a, int pos);
+void doador_esquerda(No_Doencas *a, int pos);
+// Varias
 void imprime_arvore(No_Doencas *a, int h);
-Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
+int is_cheio(No_Doencas *a);
+int is_vazio(No_Doencas *a);
+int is_folha(No_Doencas *a);
+// Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
 // void Remover_Doença(Arvore_Doencas *a, int chave);
 // Arvore_Doencas *Balacear_Arvore_Doenca(Arvore_Doencas *a);
 // int testaFolha(Arvore_Doencas *a);
