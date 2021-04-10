@@ -1,7 +1,5 @@
 #include "arquivos.h"
 
-#include "arquivo.h"
-
 FILE *cria_arquivo(){
     FILE* novoArquivo;
     return novoArquivo;
@@ -37,8 +35,14 @@ void imprimir_dados(int linha_inicial, int linha_final, FILE *arquivo){
     fscanf(arquivo, "%s", c);
     printf("\n");
     for(int i=v[linha_inicial];i<v[linha_final+1]-1;i++){
-        fprintf("%c", c[i]);
+        printf("%c", c[i]);
     }
+}
+
+FILE *inserir_dados(const char *dados, FILE *arquivo){
+    //insere uma string de dados no arquivo
+    fprintf(arquivo, "%s", dados);
+    return arquivo;
 }
 
 void gerencia_arquivo(FILE *arquivo,const char nome[30]){
