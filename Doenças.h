@@ -31,37 +31,62 @@ void imprime_doenca(Doenca *doenca);
 
 typedef struct no_doencas
 {
+  int id;                     // Identificador unico do no
   int folha, n_chaves;        //bool
   Doenca *chaves[MAX_CHAVES]; //limite superior
   struct no_doencas *filhos[MAX_FILHOS];
 } No_Doencas;
 
+#define V_SIZE 15
+typedef struct v_nos
+{
+  int n;
+  int max;
+  No_Doencas **nos;
+} V_Nos;
+
 typedef struct arvore_doenca
 {
-  int n_doencas; //nro doencas
-  No_Doencas *raiz;
+  int n_doencas;    // Nro. de doencas
+  No_Doencas *raiz; // Raiz da arvore
+
+  V_Nos *arquivo_tmp; // Vetor para simular acceso a arquivos do sistema temporalmente
+  V_Nos *nos_abertos; // Cache de nos abertos em memoria
+  int max_no_id;      // Nro do ultimo id de no asignado
 } Arvore_Doencas;
 
 // Criação
 Arvore_Doencas *cria_arvore_doencas();
 No_Doencas *cria_no_arvore_doencas(int folha);
+
 // Inserção
 void inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
-No_Doencas *inserir_no(Doenca *doenca, No_Doencas *a);
-void dividir_filho(int pos, No_Doencas *no, No_Doencas *filho);
+No_Doencas *inserir_no(Arvore_Doencas *r, Doenca *doenca, No_Doencas *a);
+void dividir_filho(Arvore_Doencas *r, int pos, No_Doencas *no, No_Doencas *filho);
+
 // Remoção :(
 void remover_doenca(Arvore_Doencas *a, int id);
-void remover(int id, No_Doencas *a);
-void remover_de_interno(No_Doencas *a, int pos);
-void remover_de_folha(No_Doencas *a, int pos);
-void combinar_filhos(No_Doencas *a, int pos);
-void doador_direita(No_Doencas *a, int pos);
-void doador_esquerda(No_Doencas *a, int pos);
+void remover(Arvore_Doencas *r, int id, No_Doencas *a);
+void remover_de_interno(Arvore_Doencas *r, No_Doencas *a, int pos);
+void remover_de_folha(Arvore_Doencas *r, No_Doencas *a, int pos);
+void combinar_filhos(Arvore_Doencas *r, No_Doencas *a, int pos);
+void doador_direita(Arvore_Doencas *r, No_Doencas *a, int pos);
+void doador_esquerda(Arvore_Doencas *r, No_Doencas *a, int pos);
+
 // Varias
 void imprime_arvore(No_Doencas *a, int h);
 int is_cheio(No_Doencas *a);
 int is_vazio(No_Doencas *a);
 int is_folha(No_Doencas *a);
+
+// Carga/Persistencia de nos;
+Arvore_Doencas *carregar_arvore_doencas();
+No_Doencas *get_no(int id_no, Arvore_Doencas *a);
+void *persistir_nos_abertos(Arvore_Doencas *a);
+void *persistir_no(int id, Arvore_Doencas *a);
+void *liberar_nos_abertos(Arvore_Doencas *a);
+void *liberar_no(int id, Arvore_Doencas *a);
+
 // Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
 // void Remover_Doença(Arvore_Doencas *a, int chave);
 // Arvore_Doencas *Balacear_Arvore_Doenca(Arvore_Doencas *a);

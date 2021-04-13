@@ -90,28 +90,28 @@ void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
         {
             No_Doencas *novo = cria_no_arvore_doencas(0);
             novo->filhos[0] = a->raiz;
-            dividir_filho(0, novo, a->raiz);
+            dividir_filho(a, 0, novo, a->raiz);
             // imprime_arvore(novo, 0);
 
             if (novo->chaves[0]->id > doenca->id)
             {
-                novo->filhos[0] = inserir_no(doenca, novo->filhos[0]);
+                novo->filhos[0] = inserir_no(a, doenca, novo->filhos[0]);
             }
             else
             {
-                novo->filhos[1] = inserir_no(doenca, novo->filhos[1]);
+                novo->filhos[1] = inserir_no(a, doenca, novo->filhos[1]);
             }
             a->raiz = novo;
         }
         else // CASO: raiz com espaços livres
         {
-            inserir_no(doenca, a->raiz);
+            inserir_no(a, doenca, a->raiz);
         }
     }
     a->n_doencas += 1;
 }
 
-No_Doencas *inserir_no(Doenca *doenca, No_Doencas *a)
+No_Doencas *inserir_no(Arvore_Doencas *r, Doenca *doenca, No_Doencas *a)
 {
     int i = 0;
     if (a->folha) // CASO: No folha
@@ -132,18 +132,18 @@ No_Doencas *inserir_no(Doenca *doenca, No_Doencas *a)
 
         if (a->filhos[i + 1]->n_chaves == MAX_CHAVES) // CASO: no esteja completo
         {
-            dividir_filho(i + 1, a, a->filhos[i + 1]);
+            dividir_filho(r, i + 1, a, a->filhos[i + 1]);
             if (a->chaves[i + 1]->id < doenca->id)
             {
                 i++;
             }
         }
-        a->filhos[i + 1] = inserir_no(doenca, a->filhos[i + 1]);
+        a->filhos[i + 1] = inserir_no(r, doenca, a->filhos[i + 1]);
     }
     return a;
 }
 
-void dividir_filho(int pos, No_Doencas *no, No_Doencas *filho)
+void dividir_filho(Arvore_Doencas *r, int pos, No_Doencas *no, No_Doencas *filho)
 {
     // Variaveis
     int i = 0;
@@ -210,7 +210,7 @@ void remover_doenca(Arvore_Doencas *a, int id)
         return;
 
     // Remove chave
-    remover(id, a->raiz);
+    remover(a, id, a->raiz);
 
     // Verifica se a raiz ficou vazia
     if (is_vazio(a->raiz))
@@ -226,7 +226,7 @@ void remover_doenca(Arvore_Doencas *a, int id)
     }
 }
 
-void remover(int id, No_Doencas *a)
+void remover(Arvore_Doencas *r, int id, No_Doencas *a)
 {
     int pos = 0;
     // Busca posicao da chave ou da primeira chave maior
@@ -236,9 +236,9 @@ void remover(int id, No_Doencas *a)
     if (pos < a->n_chaves && a->chaves[pos]->id == id)
     {
         if (is_folha(a))
-            remover_de_folha(a, pos); // CASO 1
+            remover_de_folha(r, a, pos); // CASO 1
         else
-            remover_de_interno(a, pos);
+            remover_de_interno(r, a, pos);
     }
     else // CASO: Nó não contem a chave
     {
@@ -255,26 +255,26 @@ void remover(int id, No_Doencas *a)
         {
             // Verifica se a sub-arvore da esquerda pode doar
             if (pos != 0 && a->filhos[pos - 1]->n_chaves >= T)
-                doador_esquerda(a, pos);
+                doador_esquerda(r, a, pos);
             // Verifica se a sub-arvore da direita pode doar
             else if (pos != a->n_chaves && a->filhos[pos + 1]->n_chaves >= T)
-                doador_direita(a, pos);
+                doador_direita(r, a, pos);
             // Caso nenhuma possa doar, combinar arvores
             else if (pos != a->n_chaves)
-                combinar_filhos(a, pos);
+                combinar_filhos(r, a, pos);
             else
-                combinar_filhos(a, pos - 1);
+                combinar_filhos(r, a, pos - 1);
         }
         // Se a ultima chave foi combinada com uma sub-arvore,
         // ir a sub-arvore anterior
         if (ultima_chave && pos > a->n_chaves)
-            remover(id, a->filhos[pos - 1]);
+            remover(r, id, a->filhos[pos - 1]);
         else
-            remover(id, a->filhos[pos]);
+            remover(r, id, a->filhos[pos]);
     }
 }
 
-void remover_de_interno(No_Doencas *a, int pos)
+void remover_de_interno(Arvore_Doencas *r, No_Doencas *a, int pos)
 {
     Doenca *doenca = a->chaves[pos];
 
@@ -290,7 +290,7 @@ void remover_de_interno(No_Doencas *a, int pos)
         tmp->chaves[tmp->n_chaves - 1] = doenca;
 
         // Remove recursivamente a chave extra
-        remover(doenca->id, a->filhos[pos]);
+        remover(r, doenca->id, a->filhos[pos]);
     }
     // Verifica se a sub-arvore direita tem chaves suficientes
     else if (a->filhos[pos + 1]->n_chaves > MIN_CHAVES)
@@ -304,18 +304,18 @@ void remover_de_interno(No_Doencas *a, int pos)
         tmp->chaves[0] = doenca;
 
         // Remove recursivamente a chave extra
-        remover(doenca->id, a->filhos[pos + 1]);
+        remover(r, doenca->id, a->filhos[pos + 1]);
     }
     // Se nenhuma sub-arvore tem chaves suficientes,
     // combinamos as arvores
     else
     {
-        combinar_filhos(a, pos);
-        remover(doenca->id, a->filhos[pos]);
+        combinar_filhos(r, a, pos);
+        remover(r, doenca->id, a->filhos[pos]);
     }
 }
 
-void remover_de_folha(No_Doencas *a, int pos)
+void remover_de_folha(Arvore_Doencas *r, No_Doencas *a, int pos)
 {
     // Libera chaves
     free(a->chaves[pos]);
@@ -327,7 +327,7 @@ void remover_de_folha(No_Doencas *a, int pos)
         a->chaves[i - 1] = a->chaves[i];
 }
 
-void combinar_filhos(No_Doencas *a, int pos)
+void combinar_filhos(Arvore_Doencas *r, No_Doencas *a, int pos)
 {
     No_Doencas *esq = a->filhos[pos],
                *dir = a->filhos[pos + 1];
@@ -358,7 +358,8 @@ void combinar_filhos(No_Doencas *a, int pos)
     // Libera no
     free(dir);
 }
-void doador_direita(No_Doencas *a, int pos)
+
+void doador_direita(Arvore_Doencas *r, No_Doencas *a, int pos)
 {
     No_Doencas *filho = a->filhos[pos],
                *dir = a->filhos[pos + 1];
@@ -387,7 +388,8 @@ void doador_direita(No_Doencas *a, int pos)
 
     return;
 }
-void doador_esquerda(No_Doencas *a, int pos)
+
+void doador_esquerda(Arvore_Doencas *r, No_Doencas *a, int pos)
 {
     No_Doencas *filho = a->filhos[pos],
                *esq = a->filhos[pos - 1];
@@ -430,6 +432,30 @@ int is_folha(No_Doencas *a)
 {
     return a->folha && a->filhos[0] == NULL;
 }
+
+// Carga/Persistencia de nos;
+Arvore_Doencas *carregar_arvore_doencas()
+{
+}
+No_Doencas *get_no(int id_no, Arvore_Doencas *a)
+{
+    for (int i = 0; i < a->nos_abertos->n; i++)
+        if (a->nos_abertos->nos[i]->id == id_no)
+            return a->nos_abertos->nos[i];
+}
+void *persistir_nos_abertos(Arvore_Doencas *a)
+{
+}
+void *persistir_no(int id, Arvore_Doencas *a)
+{
+}
+void *liberar_nos_abertos(Arvore_Doencas *a)
+{
+}
+void *liberar_no(int id, Arvore_Doencas *a)
+{
+}
+
 // Arvore_Doencas Busca(Arvore_Doencas *a, int chave)
 // {
 //busca alguma chave
