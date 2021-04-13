@@ -46,15 +46,26 @@ void imprime_doenca(Doenca *doença)
 
 Arvore_Doencas *cria_arvore_doencas()
 {
-    Arvore_Doencas *a_doencas = (Arvore_Doencas *)malloc(sizeof(Arvore_Doencas));
-    a_doencas->n_doencas = 0;
-    a_doencas->raiz = NULL;
-    return a_doencas;
+    Arvore_Doencas *a = (Arvore_Doencas *)malloc(sizeof(Arvore_Doencas));
+    a->n_doencas = 0;
+    a->raiz = NULL;
+    a->nos_abertos = (V_Nos *)malloc(sizeof(V_Nos));
+    a->nos_abertos->n = 0;
+    a->nos_abertos->max = V_SIZE;
+    a->nos_abertos->nos = (No_Doencas **)malloc(a->nos_abertos->max * sizeof(No_Doencas *));
+
+    a->arquivo_tmp = (V_Nos *)malloc(sizeof(V_Nos));
+    a->arquivo_tmp->n = 0;
+    a->arquivo_tmp->max = 100;
+    a->arquivo_tmp->nos = (No_Doencas **)malloc(a->arquivo_tmp->max * sizeof(No_Doencas *));
+
+    return a;
 };
 
-No_Doencas *cria_no_arvore_doencas(int folha)
+No_Doencas *cria_no_arvore_doencas(Arvore_Doencas *r, int folha)
 {
     No_Doencas *no = (No_Doencas *)malloc(sizeof(No_Doencas));
+    no->id = r->max_no_id++;
     no->folha = folha;
     no->n_chaves = 0;
     for (int i = 0; i < MAX_CHAVES; i++)
@@ -62,8 +73,28 @@ No_Doencas *cria_no_arvore_doencas(int folha)
         no->chaves[i] = NULL;
         no->filhos[i] = NULL;
     }
-    no->filhos[MAX_FILHOS - 1] = NULL;
+
+    // Verifica se é necesario expandir o cache de nos abertos
+    if (r->nos_abertos->n == r->nos_abertos->max)
+    {
+        r->nos_abertos->max += V_SIZE;
+        r->nos_abertos->nos = realloc(r->nos_abertos->nos, r->nos_abertos->max * sizeof(No_Doencas *));
+    }
+    printf("%d\n", no->id);
+    r->nos_abertos->nos[r->nos_abertos->n++] = no;
+    r->arquivo_tmp->nos[r->arquivo_tmp->n++] = no;
     return no;
+}
+
+void liberar_no_arvore_doencas(No_Doencas *no)
+{
+    // Libera memoria das chaves
+    for (int i = 0; i < no->n_chaves; i++)
+    {
+        free(no->chaves[i]);
+    }
+    // Libera no
+    free(no);
 }
 
 void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
@@ -80,7 +111,7 @@ void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
     }
     if (a->n_doencas == 0) // CASO: Arvore vazia
     {
-        a->raiz = cria_no_arvore_doencas(1);
+        a->raiz = cria_no_arvore_doencas(a, 1);
         a->raiz->chaves[0] = doenca;
         a->raiz->n_chaves = 1;
     }
@@ -88,10 +119,9 @@ void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
     {
         if (a->raiz->n_chaves == MAX_CHAVES) // CASO: raiz completa
         {
-            No_Doencas *novo = cria_no_arvore_doencas(0);
+            No_Doencas *novo = cria_no_arvore_doencas(a, 0);
             novo->filhos[0] = a->raiz;
             dividir_filho(a, 0, novo, a->raiz);
-            // imprime_arvore(novo, 0);
 
             if (novo->chaves[0]->id > doenca->id)
             {
@@ -147,7 +177,7 @@ void dividir_filho(Arvore_Doencas *r, int pos, No_Doencas *no, No_Doencas *filho
 {
     // Variaveis
     int i = 0;
-    No_Doencas *novo = cria_no_arvore_doencas(filho->folha);
+    No_Doencas *novo = cria_no_arvore_doencas(r, filho->folha);
     novo->n_chaves = MIN_CHAVES;
 
     // Copia os ultimos elementos para o novo no
@@ -436,24 +466,112 @@ int is_folha(No_Doencas *a)
 // Carga/Persistencia de nos;
 Arvore_Doencas *carregar_arvore_doencas()
 {
+    // Falta carregar arvores base desde arquivo
+    return cria_arvore_doencas();
 }
+
 No_Doencas *get_no(int id_no, Arvore_Doencas *a)
 {
+    printf("++ %d\n", id_no);
+    // Busca no entre os nos abertos
     for (int i = 0; i < a->nos_abertos->n; i++)
         if (a->nos_abertos->nos[i]->id == id_no)
             return a->nos_abertos->nos[i];
+
+    // CASO o no nao esteja carregado.
+    // Carrega o no usando seu arquivo
+    // Temporalmente uso de um vetor para simular acesso a arquivos
+    for (int i = 0; i < a->arquivo_tmp->n; i++)
+        if (a->arquivo_tmp->nos[i]->id == id_no)
+        {
+            // Verifica se é necesario expandir o cache de nos abertos
+            if (a->nos_abertos->n == a->nos_abertos->max)
+            {
+                a->nos_abertos->max += V_SIZE;
+                a->nos_abertos->nos = (No_Doencas **)realloc(a->nos_abertos->nos, a->nos_abertos->max * sizeof(No_Doencas *));
+            }
+            a->nos_abertos->nos[a->nos_abertos->n++] = a->arquivo_tmp->nos[i];
+            return a->arquivo_tmp->nos[i];
+        }
 }
-void *persistir_nos_abertos(Arvore_Doencas *a)
+
+void persistir_nos_abertos(Arvore_Doencas *a)
 {
+    for (int i = a->nos_abertos->n - 1; i >= 0; i--)
+    {
+        persistir_no(a->nos_abertos->nos[i]->id, a);
+    }
 }
-void *persistir_no(int id, Arvore_Doencas *a)
+
+void persistir_no(int id, Arvore_Doencas *a)
 {
+    int i = a->nos_abertos->n - 1;
+    while (i >= 0 && a->nos_abertos->nos[i])
+        --i;
+
+    if (i < 0)
+        return;
+
+    No_Doencas *no = a->nos_abertos->nos[i];
+
+    // Caso esteja no final do vetor
+    if (i == a->nos_abertos->n - 1)
+    {
+        a->nos_abertos->nos[i] = NULL;
+    }
+    // Caso esteja no meio do vetor
+    else
+    {
+        while (i < a->nos_abertos->n - 1)
+        {
+            a->nos_abertos->nos[i] = a->nos_abertos->nos[i + 1];
+            i++;
+        }
+    }
+
+    /*
+        Falta implementar persistencia no arquivo
+    */
+    // Desabilitado até utilizar arquivos
+    // liberar_no_arvore_doencas(no);
 }
-void *liberar_nos_abertos(Arvore_Doencas *a)
+
+void liberar_nos_abertos(Arvore_Doencas *a)
 {
+    for (int i = a->nos_abertos->n - 1; i >= 0; i--)
+    {
+        liberar_no(a->nos_abertos->nos[i]->id, a);
+    }
 }
-void *liberar_no(int id, Arvore_Doencas *a)
+
+void liberar_no(int id, Arvore_Doencas *a)
 {
+    int i = a->nos_abertos->n - 1;
+    while (i >= 0 && a->nos_abertos->nos[i])
+        --i;
+
+    if (i < 0)
+        return;
+
+    No_Doencas *no = a->nos_abertos->nos[i];
+
+    // Caso esteja no final do vetor
+    if (i == a->nos_abertos->n - 1)
+    {
+        a->nos_abertos->nos[i] = NULL;
+    }
+    // Caso esteja no meio do vetor
+    else
+    {
+        while (i < a->nos_abertos->n - 1)
+        {
+            a->nos_abertos->nos[i] = a->nos_abertos->nos[i + 1];
+            i++;
+        }
+    }
+
+    // Desabilitado até utilizar arquivos
+    // liberar_no_arvore_doencas(no);
 }
 
 // Arvore_Doencas Busca(Arvore_Doencas *a, int chave)

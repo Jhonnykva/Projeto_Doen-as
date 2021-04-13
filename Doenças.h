@@ -57,7 +57,8 @@ typedef struct arvore_doenca
 
 // Criação
 Arvore_Doencas *cria_arvore_doencas();
-No_Doencas *cria_no_arvore_doencas(int folha);
+No_Doencas *cria_no_arvore_doencas(Arvore_Doencas *r, int folha);
+void liberar_no_arvore_doencas(No_Doencas *no);
 
 // Inserção
 void inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
@@ -82,10 +83,10 @@ int is_folha(No_Doencas *a);
 // Carga/Persistencia de nos;
 Arvore_Doencas *carregar_arvore_doencas();
 No_Doencas *get_no(int id_no, Arvore_Doencas *a);
-void *persistir_nos_abertos(Arvore_Doencas *a);
-void *persistir_no(int id, Arvore_Doencas *a);
-void *liberar_nos_abertos(Arvore_Doencas *a);
-void *liberar_no(int id, Arvore_Doencas *a);
+void persistir_nos_abertos(Arvore_Doencas *a);
+void persistir_no(int id, Arvore_Doencas *a);
+void liberar_nos_abertos(Arvore_Doencas *a);
+void liberar_no(int id, Arvore_Doencas *a);
 
 // Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
 // void Remover_Doença(Arvore_Doencas *a, int chave);

@@ -16,18 +16,29 @@ int main(int argc, char **argv)
         inserir_doenca(doenca, a);
         // imprime_arvore(a->raiz, 0);
         printf("\n====== %d inserido ======\n", ids[i]);
+        putchar('\n');
+        for (int i = 0; i < a->nos_abertos->n; i++)
+            printf(" %d", a->nos_abertos->nos[i]->id);
+        putchar('\n');
     }
-    imprime_arvore(a->raiz, 0);
+    // imprime_arvore(a->raiz, 0);
     remover_doenca(a, 7);
-    printf("\n====== Removido 7 ======\n");
-    imprime_arvore(a->raiz, 0);
+    // printf("\n====== Removido 7 ======\n");
+    // imprime_arvore(a->raiz, 0);
     remover_doenca(a, 43);
-    printf("\n====== Removido 43 ======\n");
-    imprime_arvore(a->raiz, 0);
+    // printf("\n====== Removido 43 ======\n");
+    // imprime_arvore(a->raiz, 0);
     remover_doenca(a, 10);
-    printf("\n====== Removido 10 ======\n");
-    imprime_arvore(a->raiz, 0);
-
+    // printf("\n====== Removido 10 ======\n");
+    // imprime_arvore(a->raiz, 0);
+    putchar('\n');
+    for (int i = 0; i < a->nos_abertos->n; i++)
+        printf(" %d", a->nos_abertos->nos[i]->id);
+    putchar('\n');
+    putchar('-');
+    putchar('\n');
+    for (int i = 0; i < a->arquivo_tmp->n; i++)
+        printf(" %d", a->arquivo_tmp->nos[i]->id);
     elimina_doenca(doenca);
     return 0;
 }
