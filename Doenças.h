@@ -28,16 +28,17 @@ void imprime_doenca(Doenca *doenca);
 #define MIN_CHAVES T - 1
 #define MAX_FILHOS 2 * T
 #define MIN_FILHOS T
-
+#define NO_DOENCA_VAZIO -1
 typedef struct no_doencas
 {
   int id;                     // Identificador unico do no
   int folha, n_chaves;        //bool
   Doenca *chaves[MAX_CHAVES]; //limite superior
-  struct no_doencas *filhos[MAX_FILHOS];
+  // struct no_doencas *filhos[MAX_FILHOS];
+  int filhos[MAX_FILHOS];
 } No_Doencas;
 
-#define V_SIZE 15
+#define V_SIZE 5
 typedef struct v_nos
 {
   int n;
@@ -47,8 +48,8 @@ typedef struct v_nos
 
 typedef struct arvore_doenca
 {
-  int n_doencas;    // Nro. de doencas
-  No_Doencas *raiz; // Raiz da arvore
+  int n_doencas; // Nro. de doencas
+  int raiz;      // Raiz da arvore
 
   V_Nos *arquivo_tmp; // Vetor para simular acceso a arquivos do sistema temporalmente
   V_Nos *nos_abertos; // Cache de nos abertos em memoria
@@ -75,7 +76,7 @@ void doador_direita(Arvore_Doencas *r, No_Doencas *a, int pos);
 void doador_esquerda(Arvore_Doencas *r, No_Doencas *a, int pos);
 
 // Varias
-void imprime_arvore(No_Doencas *a, int h);
+void imprime_arvore(Arvore_Doencas *r, No_Doencas *a, int h);
 int is_cheio(No_Doencas *a);
 int is_vazio(No_Doencas *a);
 int is_folha(No_Doencas *a);
