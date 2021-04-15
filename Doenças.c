@@ -140,6 +140,7 @@ void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
         }
     }
     a->n_doencas += 1;
+    persistir_nos_abertos(a);
 }
 
 No_Doencas *inserir_no(Arvore_Doencas *r, Doenca *doenca, No_Doencas *a)
@@ -505,7 +506,7 @@ void persistir_nos_abertos(Arvore_Doencas *a)
 void persistir_no(int id, Arvore_Doencas *a)
 {
     int i = a->nos_abertos->n - 1;
-    while (i >= 0 && a->nos_abertos->nos[i])
+    while (i >= 0 && a->nos_abertos->nos[i]->id == id)
         --i;
 
     if (i < 0)
@@ -531,6 +532,7 @@ void persistir_no(int id, Arvore_Doencas *a)
     /*
         Falta implementar persistencia no arquivo
     */
+    persiste_no_arquivo(no);
     // Desabilitado até utilizar arquivos
     // liberar_no_arvore_doencas(no);
 }
@@ -571,6 +573,57 @@ void liberar_no(int id, Arvore_Doencas *a)
 
     // Desabilitado até utilizar arquivos
     // liberar_no_arvore_doencas(no);
+}
+
+int persiste_no_arquivo(No_Doencas *no)
+{
+    // Gera nome arquivo
+    char fName[MAX_ARQ_BUFFER] = "", s_id[10];
+    sprintf(s_id, "%05d", no->id);
+    strcat(fName, DATA_HOME);
+    strcat(fName, "/bt-");
+    strcat(fName, s_id);
+    strcat(fName, ".no");
+    strcat(fName, "\0");
+    remove(fName);
+    FILE *arq = fopen(fName, "wb");
+    // Verifica se o arquivo foi aberto
+    if (arq == NULL)
+    {
+        printf("ERROR:persiste_no_arquivo: não foi possível abrir o arquivo \"%s\".\n", fName);
+        exit(1);
+    }
+    printf("A\n");
+    fprintf(arq, "%d %d %d %d\n", no->id, no->n_chaves, no->folha, T);
+    printf("B\n");
+
+    // Chaves
+    for (int i = 0; i < no->n_chaves; i++)
+    {
+        Doenca *doenca = no->chaves[i];
+        fprintf(arq, "%d %s %d", doenca->id, doenca->nome, doenca->n_sintomas);
+        for (int j = 0; j < doenca->n_sintomas; j++)
+            fprintf(arq, " %d", doenca->sintomas[j]);
+        fprintf(arq, "\n");
+    }
+    printf("C\n");
+
+    if (!is_folha(no))
+    {
+        // Filhos
+        for (int i = 0; i < no->n_chaves + 1; i++)
+        {
+            fprintf(arq, "%d\n", no->filhos[i]);
+        }
+    }
+    printf("D\n");
+
+    fclose(arq);
+
+    return 0;
+}
+No_Doencas *carrega_arquivo_no(int id)
+{
 }
 
 // Arvore_Doencas Busca(Arvore_Doencas *a, int chave)

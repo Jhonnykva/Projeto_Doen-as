@@ -88,8 +88,5 @@ void persistir_nos_abertos(Arvore_Doencas *a);
 void persistir_no(int id, Arvore_Doencas *a);
 void liberar_nos_abertos(Arvore_Doencas *a);
 void liberar_no(int id, Arvore_Doencas *a);
-
-// Doenca *Busca_Doenca(Arvore_Doencas *a, int chave);
-// void Remover_Doença(Arvore_Doencas *a, int chave);
-// Arvore_Doencas *Balacear_Arvore_Doenca(Arvore_Doencas *a);
-// int testaFolha(Arvore_Doencas *a);
+int persiste_no_arquivo(No_Doencas *no);
+No_Doencas *carrega_arquivo_no(int id);

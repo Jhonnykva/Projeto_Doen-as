@@ -1,4 +1,6 @@
 #ifndef MAIN_INCLUDES
+#define MAX_ARQ_BUFFER 256
+#define DATA_HOME "./data"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
