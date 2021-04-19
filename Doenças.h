@@ -10,14 +10,14 @@ typedef struct doencas
 {
   unsigned int id;
   char nome[MAX_NOME];
-  unsigned int n_sintomas;
+  unsigned int nSintomas;
   unsigned int *sintomas;
 
 } Doenca;
 
-Doenca *cria_doenca(unsigned int id, char *nome, unsigned int n_sintomas, unsigned int *sintomas);
-void elimina_doenca(Doenca *doenca);
-void imprime_doenca(Doenca *doenca);
+Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, unsigned int *sintomas);
+void eliminaDoenca(Doenca *doenca);
+void imprimeDoenca(Doenca *doenca);
 
 /*** 
  * Árvore Doenças 
@@ -83,6 +83,8 @@ void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h);
 int isCheio(NoDoencas *a);
 int isVazio(NoDoencas *a);
 int isFolha(NoDoencas *a);
+Doenca* getDoenca(int id, ArvoreDoencas *a);
+Doenca* getChave(int id, NoDoencas* n, ArvoreDoencas *a);
 
 // Carga/Persistencia de nos;
 ArvoreDoencas *carregaArvDoencas();

@@ -4,30 +4,30 @@
  * Estrutura de Doenças 
 ***/
 
-Doenca *cria_doenca(unsigned int id, char *nome, unsigned int n_sintomas, unsigned int *sintomas)
+Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, unsigned int *sintomas)
 {
     // Verifica que os dados sejam válidos
     if (nome == NULL)
     {
-        printf("ERROR: Doenca::cria_doenca: O nome não pode ser NULL\n");
+        printf("ERROR: Doenca::criaDoenca: O nome não pode ser NULL\n");
         exit(1);
     }
     else if (sintomas == NULL)
     {
-        printf("ERROR: Doenca::cria_doenca: O array de sintomas não pode ser NULL\n");
+        printf("ERROR: Doenca::criaDoenca: O array de sintomas não pode ser NULL\n");
         exit(1);
     }
 
     Doenca *doenca = (Doenca *)malloc(sizeof(Doenca));
     doenca->id = id;
     strcpy(doenca->nome, nome); // Falta tratar o tamanho do nome
-    doenca->n_sintomas = n_sintomas;
+    doenca->nSintomas = nSintomas;
     doenca->sintomas = sintomas;
 
     return doenca;
 }
 
-void elimina_doenca(Doenca *doença)
+void eliminaDoenca(Doenca *doença)
 {
     // FALTA
     if (doença == NULL)
@@ -37,7 +37,7 @@ void elimina_doenca(Doenca *doença)
     free(doença);
 };
 
-void imprime_doenca(Doenca *doença)
+void imprimeDoenca(Doenca *doença)
 {
     if (doença != NULL)
     {
@@ -90,7 +90,7 @@ void liberarNoArvoreDoencas(NoDoencas *no)
     // Libera memoria das chaves
     for (int i = 0; i < no->nChaves; i++)
     {
-        elimina_doenca(no->chaves[i]);
+        eliminaDoenca(no->chaves[i]);
     }
     // Libera no
     free(no);
@@ -360,7 +360,7 @@ void removerDeInterno(ArvoreDoencas *r, NoDoencas *a, int pos)
 void removerDeFolha(ArvoreDoencas *r, NoDoencas *a, int pos)
 {
     // Libera chaves
-    elimina_doenca(a->chaves[pos]);
+    eliminaDoenca(a->chaves[pos]);
     a->chaves[pos] = NULL;
     a->nChaves -= 1;
 
@@ -473,6 +473,35 @@ int isVazio(NoDoencas *a)
 int isFolha(NoDoencas *a)
 {
     return a->folha && a->filhos[0] == NO_DOENCA_VAZIO;
+}
+
+Doenca *getDoenca(int id, ArvoreDoencas *a)
+{
+    if (a == NULL)
+        return NULL;
+
+    return getChave(id, getNo(a->raiz, a), a);
+};
+
+Doenca *getChave(int id, NoDoencas *n, ArvoreDoencas *a)
+{
+    // Busca chave ou a primeira chave maior que o id
+    int i = 0;
+    while (i < n->nChaves && id > n->chaves[i]->id)
+    {
+        i++;
+    };
+
+    // Verifica se é a chave buscada
+    if (i < n->nChaves && n->chaves[i]->id == id)
+        return n->chaves[i];
+
+    // Se estamos em uma folha, a chave não existe
+    if (isFolha(n))
+        return NULL;
+
+    // Busca recursivamente no filho selecionado
+    return getChave(id, getNo(n->filhos[i], a), a);
 }
 
 // Carga/Persistencia de nos;
@@ -623,8 +652,8 @@ int persisteNoArq(NoDoencas *no)
     for (int i = 0; i < no->nChaves; i++)
     {
         Doenca *doenca = no->chaves[i];
-        fprintf(arq, "%d %s %d", doenca->id, doenca->nome, doenca->n_sintomas);
-        for (int j = 0; j < doenca->n_sintomas; j++)
+        fprintf(arq, "%d %s %d", doenca->id, doenca->nome, doenca->nSintomas);
+        for (int j = 0; j < doenca->nSintomas; j++)
             fprintf(arq, " %d", doenca->sintomas[j]);
         fprintf(arq, "\n");
     }
@@ -676,14 +705,14 @@ NoDoencas *carregaArqNo(int id)
     // Chaves
     for (int i = 0; i < no->nChaves; i++)
     {
-        int n_sintomas, *sintomas;
+        int nSintomas, *sintomas;
         char nome[MAX_NOME] = "";
-        fscanf(arq, "%d %s %d", &id, &nome, &n_sintomas);
-        sintomas = (int *)malloc(n_sintomas * sizeof(int));
-        for (int j = 0; j < n_sintomas; j++)
+        fscanf(arq, "%d %s %d", &id, &nome, &nSintomas);
+        sintomas = (int *)malloc(nSintomas * sizeof(int));
+        for (int j = 0; j < nSintomas; j++)
             fscanf(arq, " %d", &sintomas[j]);
         fscanf(arq, "\n", NULL);
-        no->chaves[i] = cria_doenca(id, nome, n_sintomas, sintomas);
+        no->chaves[i] = criaDoenca(id, nome, nSintomas, sintomas);
     }
 
     // Filhos

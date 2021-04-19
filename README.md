@@ -25,7 +25,7 @@ A tabela hash vai ter relações para diferentes doenças, onde a árvore vai se
     {
       unsigned int id;
       char nome[MAX_NOME];
-      unsigned int n_sintomas;
+      unsigned int nSintomas;
       unsigned int *sintomas;
 
     } Doença;
