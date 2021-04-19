@@ -29,6 +29,9 @@ void imprime_doenca(Doenca *doenca);
 #define MAX_FILHOS 2 * T
 #define MIN_FILHOS T
 #define NO_DOENCA_VAZIO -1
+#define DOENCAS_N_PRE "d-bt-"
+#define DOENCAS_N_EXT ".no"
+#define DOENCAS_CAB "doencas.btree"
 typedef struct no_doencas
 {
   int id;                     // Identificador unico do no
@@ -51,7 +54,6 @@ typedef struct arvore_doenca
   int n_doencas; // Nro. de doencas
   int raiz;      // Raiz da arvore
 
-  V_Nos *arquivo_tmp; // Vetor para simular acceso a arquivos do sistema temporalmente
   V_Nos *nos_abertos; // Cache de nos abertos em memoria
   int max_no_id;      // Nro do ultimo id de no asignado
 } Arvore_Doencas;
@@ -60,6 +62,7 @@ typedef struct arvore_doenca
 Arvore_Doencas *cria_arvore_doencas();
 No_Doencas *cria_no_arvore_doencas(Arvore_Doencas *r, int folha);
 void liberar_no_arvore_doencas(No_Doencas *no);
+void liberar_arvore_doencas(Arvore_Doencas *a);
 
 // Inserção
 void inserir_doenca(Doenca *doenca, Arvore_Doencas *a);
@@ -84,9 +87,11 @@ int is_folha(No_Doencas *a);
 // Carga/Persistencia de nos;
 Arvore_Doencas *carregar_arvore_doencas();
 No_Doencas *get_no(int id_no, Arvore_Doencas *a);
-void persistir_nos_abertos(Arvore_Doencas *a);
+void persistir_arvore_doencas(Arvore_Doencas *a);
 void persistir_no(int id, Arvore_Doencas *a);
 void liberar_nos_abertos(Arvore_Doencas *a);
 void liberar_no(int id, Arvore_Doencas *a);
 int persiste_no_arquivo(No_Doencas *no);
+int persiste_cab_doencas(Arvore_Doencas *a);
 No_Doencas *carrega_arquivo_no(int id);
+Arvore_Doencas* carrega_arq_a_doencas();

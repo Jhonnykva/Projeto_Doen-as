@@ -26,12 +26,14 @@ Doenca *cria_doenca(unsigned int id, char *nome, unsigned int n_sintomas, unsign
 
     return doenca;
 }
+
 void elimina_doenca(Doenca *doença)
 {
     // FALTA
     if (doença == NULL)
         return;
-    // Falta decidir se alocar nome e sintomas dinamicamente/estaticamente
+    // Libera vetor de sintomas
+    // free(doença->sintomas);
     free(doença);
 };
 
@@ -56,12 +58,6 @@ Arvore_Doencas *cria_arvore_doencas()
     a->nos_abertos->n = 0;
     a->nos_abertos->max = V_SIZE;
     a->nos_abertos->nos = (No_Doencas **)malloc(a->nos_abertos->max * sizeof(No_Doencas *));
-
-    a->arquivo_tmp = (V_Nos *)malloc(sizeof(V_Nos));
-    a->arquivo_tmp->n = 0;
-    a->arquivo_tmp->max = 100;
-    a->arquivo_tmp->nos = (No_Doencas **)malloc(a->arquivo_tmp->max * sizeof(No_Doencas *));
-
     return a;
 };
 
@@ -85,7 +81,6 @@ No_Doencas *cria_no_arvore_doencas(Arvore_Doencas *r, int folha)
             r->nos_abertos->nos = realloc(r->nos_abertos->nos, r->nos_abertos->max * sizeof(No_Doencas *));
         }
         r->nos_abertos->nos[r->nos_abertos->n++] = no;
-        r->arquivo_tmp->nos[r->arquivo_tmp->n++] = no;
     }
     return no;
 }
@@ -99,6 +94,18 @@ void liberar_no_arvore_doencas(No_Doencas *no)
     }
     // Libera no
     free(no);
+}
+
+void liberar_arvore_doencas(Arvore_Doencas *a)
+{
+    if (a == NULL)
+        return;
+    // Libera nos  abertos
+    liberar_nos_abertos(a);
+    // Libera raiz
+    liberar_no(a->raiz, a);
+    // Libera memoria
+    free(a);
 }
 
 void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
@@ -146,7 +153,7 @@ void inserir_doenca(Doenca *doenca, Arvore_Doencas *a)
         }
     }
     a->n_doencas += 1;
-    persistir_nos_abertos(a);
+    persistir_arvore_doencas(a);
 }
 
 No_Doencas *inserir_no(Arvore_Doencas *r, Doenca *doenca, No_Doencas *a)
@@ -259,7 +266,7 @@ void remover_doenca(Arvore_Doencas *a, int id)
         // Desaloca raiz antiga
         liberar_no(tmp->id, a);
     }
-    persistir_nos_abertos(a);
+    persistir_arvore_doencas(a);
 }
 
 void remover(Arvore_Doencas *r, int id, No_Doencas *a)
@@ -472,7 +479,11 @@ int is_folha(No_Doencas *a)
 Arvore_Doencas *carregar_arvore_doencas()
 {
     // Falta carregar arvores base desde arquivo
-    return cria_arvore_doencas();
+    Arvore_Doencas *a = carrega_arq_a_doencas();
+    if (a == NULL)
+        return cria_arvore_doencas();
+
+    return a;
 }
 
 No_Doencas *get_no(int id_no, Arvore_Doencas *a)
@@ -508,11 +519,18 @@ No_Doencas *get_no(int id_no, Arvore_Doencas *a)
     return no;
 }
 
-void persistir_nos_abertos(Arvore_Doencas *a)
+void persistir_arvore_doencas(Arvore_Doencas *a)
 {
-    for (int i = a->nos_abertos->n - 1; i >= 0; i--)
+    int status = 1;
+    status = status && persiste_cab_doencas(a);
+    for (int i = a->nos_abertos->n - 1; status && i >= 0; i--)
     {
-        persiste_no_arquivo(a->nos_abertos->nos[i]);
+        status = status && persiste_no_arquivo(a->nos_abertos->nos[i]);
+    }
+    if (!status)
+    {
+        printf("ERROR:persistir_arvore_doencas: não foi possível persistir as doenças.");
+        exit(1);
     }
 }
 
@@ -585,9 +603,9 @@ int persiste_no_arquivo(No_Doencas *no)
     char fName[MAX_ARQ_BUFFER] = "", s_id[10];
     sprintf(s_id, "%05d", no->id);
     strcat(fName, DATA_HOME);
-    strcat(fName, "/bt-");
+    strcat(fName, DOENCAS_N_PRE);
     strcat(fName, s_id);
-    strcat(fName, ".no");
+    strcat(fName, DOENCAS_N_EXT);
     strcat(fName, "\0");
     // Remove arquivo anterior
     remove(fName);
@@ -618,19 +636,21 @@ int persiste_no_arquivo(No_Doencas *no)
             fprintf(arq, "%d\n", no->filhos[i]);
         }
 
-    fclose(arq);
-
-    return 0;
+    return fclose(arq) == 0;
 }
+
 No_Doencas *carrega_arquivo_no(int id)
 {
+    if (id < 0)
+        return NULL;
+
     // Gera nome arquivo
     char fName[MAX_ARQ_BUFFER] = "", s_id[10];
     sprintf(s_id, "%05d", id);
     strcat(fName, DATA_HOME);
-    strcat(fName, "/bt-");
+    strcat(fName, DOENCAS_N_PRE);
     strcat(fName, s_id);
-    strcat(fName, ".no");
+    strcat(fName, DOENCAS_N_EXT);
     strcat(fName, "\0");
 
     FILE *arq = fopen(fName, "r");
@@ -675,83 +695,57 @@ No_Doencas *carrega_arquivo_no(int id)
     return no;
 }
 
-// Arvore_Doencas Busca(Arvore_Doencas *a, int chave)
-// {
-//busca alguma chave
-// int i = 0;
-// while ((i < a->n) && (k > a->chave[i]))
-// {
-//     i++;
-// }
-// if ((i < a->n) && (k == a->chave[i]))
-// {
-//     printf("Encontrado");
-// }
-// else if (a->folha)
-// {
-//     printf("Nao-Encontrado");
-// }
-// else
-// {
-//     return Busca(a->filhos[i], k);
-// }
-// }
+int persiste_cab_doencas(Arvore_Doencas *a)
+{
+#if DEBUG
+    printf("PESISTINDO CAB...\n");
+#endif
+    // Gera nome arquivo
+    char fName[MAX_ARQ_BUFFER] = "";
+    strcat(fName, DATA_HOME);
+    strcat(fName, DOENCAS_CAB);
+    strcat(fName, "\0");
 
-// Arvore_Doencas *inserir_doenca(Arvore_Doencas *a, Doenca *doenca)
-// {
-/*
-     if(a==NULL){
-        a= (Arvore_Doencas*)malloc(sizeof(Arvore_Doencas));//Não tenho certeza, talvez seja ponteiro de ponteiro
-        a->chave=doenca->id;//trocar id por string futuramente
-        a->folha=1;//é uma folha por enquanto
-        for(int c=0; c<MAX_CHAVES; c++){
-            a->chaves[i]=NULL;//garante que  todos os ponteiros para 
-                              //subárvores estejam nulos e prontos para uso
-        }
-        return a;
+    // Remove arquivo anterior
+    remove(fName);
+
+    FILE *arq = fopen(fName, "w");
+    // Verifica se o arquivo foi aberto
+    if (arq == NULL)
+    {
+        printf("ERROR:persiste_cab_doencas: não foi possível abrir o arquivo \"%s\".\n", fName);
+        exit(1);
     }
-    if(!testaFolha(a)){
-        a->folha=0;
-    }//Verifica se os filhos não NULL, se alguém deles não for então não é folha mais.
- 
-    int i=0, j=0, aux1, aux2;
-    while((i<MAX_CHAVES) && (doenca->id > a->chaves[i])){
-        i++;
-    }//percorre até achar o ponto em que a doença deve ser inserida
-    while(a->folha==0){
-        inserir_doenca(a->filhos[i], doenca->id);
-    }//desce até o último nível da árvore
-    //Obs: ao usar a recursão juntamente com o if(a==NULL), ele vai criando os filhos automaticamente,
-    //não tenho certeza, mas da forma que foi implementado talvez ele crie 1 filho a menos.
 
-    //CASO 1 - árvore possui espaço para colocar folha
-    if(a->chaves[MAX_CHAVES]==NULL){
-        aux1=doenca->id;
-        while(i<MAX_CHAVES){
-            aux2=a->chaves[i];
-            a->chaves[i]=aux1;
-            aux1=aux2;
-            i++;
-        }//Coloca a chave no lugar certo.
-         //acredito que testar até MAX_CHAVES não dê problema porque setei inicialmente todos os 
-         //valores das chaves como nulo, porém não tenho certeza se posso colocar um inteiro como nulo em c
-         //qualquer coisa, é só trocar os "NULL" por 0 depois
+    fprintf(arq, "%d %d %d %d\n", a->n_doencas, a->max_no_id, a->raiz, T);
+    return fclose(arq) == 0;
+}
 
-    }//testa se a subárvore não está cheia, vendo se há elemento na última posição das chaves
+Arvore_Doencas *carrega_arq_a_doencas()
+{
+    // Gera nome arquivo
+    char fName[MAX_ARQ_BUFFER] = "";
+    strcat(fName, DATA_HOME);
+    strcat(fName, DOENCAS_CAB);
+    strcat(fName, "\0");
 
-
-    //CASO 2 - árvore não possui espaço para colocar folha e necessita de um rearranjo*/
-// }
-
-// int testaFolha(Arvore_Doencas *a)
-// {
-/*
-    for(int i=0;i<(2*T);i++){
-        if(a->filhos[i]!=NULL){
-            return 0;
-        }
-        
+    FILE *arq = fopen(fName, "r");
+    // Verifica se o arquivo foi aberto
+    if (arq == NULL)
+    {
+        printf("ERROR:carrega_arq_a_doencas: não foi possível abrir o arquivo \"%s\".\n", fName);
+        exit(1);
     }
-    return 1;
-*/
-// }
+
+    Arvore_Doencas *a = cria_arvore_doencas();
+    int t = -1;
+
+    fscanf(arq, "%d %d %d %d\n", &(a->n_doencas), &(a->max_no_id), &(a->raiz), &t);
+    fclose(arq);
+    if (t != T)
+    {
+        printf("ERROR:carrega_arq_a_doencas: inconsistência de dados.\n");
+        exit(1);
+    }
+    return a;
+}

@@ -4,7 +4,12 @@ int main(int argc, char **argv)
 {
     unsigned int sintomas[3] = {1, 2, 3};
 
-    Arvore_Doencas *a = cria_arvore_doencas();
+    // Arvore_Doencas *a = cria_arvore_doencas();
+    Arvore_Doencas *a = carregar_arvore_doencas();
+    imprime_arvore(a, get_no(a->raiz, a), 0);
+    liberar_arvore_doencas(a);
+    exit(0);
+    return 0;
     Doenca *doenca = NULL;
     // Loop para teste
     unsigned int ids[] = {10, 43, 1, 4, 7, 6, 2, 56, 12, 45, 65, 3, 14, 13, 11, 98, 79};
