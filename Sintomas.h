@@ -28,6 +28,7 @@ void freeTHSintomas(THSintomas *H);
 //--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int isFull(THSintomas *H);
 int verificaSintomaExistente(char sintoma[], THSintomas *H);
+void imprimirTHCompleta(THSintomas *H);
 
 //--------FUNÇÕES DE ARQUIVOS
 char *gerarNomeSintoma(const char nomeSintoma[]);
