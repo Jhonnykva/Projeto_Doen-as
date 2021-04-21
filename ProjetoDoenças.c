@@ -1,5 +1,7 @@
 #include "ProjetoDoenças.h"
 #include "Doenças.h"
+#include "Menu.h"
+
 int main(int argc, char **argv)
 {
     unsigned int sintomas[3] = {1, 2, 3};
