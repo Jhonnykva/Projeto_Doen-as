@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "include_principal.h"
+
 
 
 
@@ -35,11 +34,11 @@ int verificaSintomaExistente(char sintoma[], THSintomas *H);
 void imprimirTHCompleta(THSintomas *H);
 
 //--------FUNÇÕES DE ARQUIVOS
+/*//Não usadas mais, mas ainda não retirei por precaução, caso necessite delas denovo
 char *gerarNomeSintoma(const char nomeSintoma[]);
 int *vetor_linhas(FILE* arquivo);
-void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int *v);
-
-void carregarTHSintoma(THSintomas *H);//falta implementar
+void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int *v);*/
+void carregarTHSintoma(THSintomas *H);
 
 //--------OUTAS FUNÇÕES
 void relacionarDoencaSintoma();
