@@ -1,4 +1,7 @@
-#include "include_principal.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 
 typedef struct sintomas{
@@ -25,6 +28,7 @@ void freeTHSintomas(THSintomas *H);
 
 
 
+
 //--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int isFull(THSintomas *H);
 int verificaSintomaExistente(char sintoma[], THSintomas *H);
@@ -35,7 +39,7 @@ char *gerarNomeSintoma(const char nomeSintoma[]);
 int *vetor_linhas(FILE* arquivo);
 void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int *v);
 
-void *carregarTHSintoma(const char nome[]);//falta implementar
+void carregarTHSintoma(THSintomas *H);//falta implementar
 
 //--------OUTAS FUNÇÕES
 void relacionarDoencaSintoma();
