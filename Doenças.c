@@ -4,7 +4,7 @@
  * Estrutura de Doenças 
 ***/
 
-Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, unsigned int *sintomas)
+Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **sintomas)
 {
     // Verifica que os dados sejam válidos
     if (nome == NULL)
@@ -27,21 +27,25 @@ Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, unsigned
     return doenca;
 }
 
-void eliminaDoenca(Doenca *doença)
+void eliminaDoenca(Doenca *doenca)
 {
-    // FALTA
-    if (doença == NULL)
+    if (doenca == NULL)
         return;
     // Libera vetor de sintomas
-    // free(doença->sintomas);
-    free(doença);
+    for (int i = 0; i < doenca->nSintomas; i++)
+        free(doenca->sintomas[i]);
+    free(doenca->sintomas);
+    free(doenca);
 };
 
 void imprimeDoenca(Doenca *doença)
 {
     if (doença != NULL)
     {
-        printf("%05d - %s \n", doença->id, doença->nome);
+        printf("%05d || %s \t|| ", doença->id, doença->nome);
+        for (int j = 0; j < doença->nSintomas; j++)
+            printf("%s, ", doença->sintomas[j]);
+        putchar('\n');
     }
 }
 
@@ -221,23 +225,6 @@ void dividirFilho(ArvoreDoencas *r, int pos, NoDoencas *no, NoDoencas *filho)
     // Copia a mediana do filho para o no e atualiza nro chaves
     no->chaves[pos] = filho->chaves[MIN_CHAVES];
     no->nChaves += 1;
-}
-
-void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h)
-{
-    int i;
-    for (i = 0; i < a->nChaves; i++)
-    {
-        if (!a->folha)
-            imprimeArvore(r, getNo(a->filhos[i], r), h + 1);
-        for (int j = 0; j < h; j++)
-            putchar('\t');
-        printf(" %d", a->chaves[i]->id);
-        putchar('\n');
-    }
-
-    if (!a->folha)
-        imprimeArvore(r, getNo(a->filhos[i], r), h + 1);
 }
 
 void removerDoenca(ArvoreDoencas *a, int id)
@@ -460,6 +447,36 @@ void DoadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos)
     esq->nChaves -= 1;
 }
 
+void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h)
+{
+    int i;
+    for (i = 0; i < a->nChaves; i++)
+    {
+        if (!a->folha)
+            imprimeArvore(r, getNo(a->filhos[i], r), h + 1);
+        for (int j = 0; j < h; j++)
+            putchar('\t');
+        printf(" %d", a->chaves[i]->id);
+        putchar('\n');
+    }
+
+    if (!a->folha)
+        imprimeArvore(r, getNo(a->filhos[i], r), h + 1);
+}
+
+void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a)
+{
+    int i;
+    for (i = 0; i < a->nChaves; i++)
+    {
+        if (!a->folha)
+            imprimeDoencas(r, getNo(a->filhos[i], r));
+        imprimeDoenca(a->chaves[i]);
+    }
+    if (!a->folha)
+        imprimeDoencas(r, getNo(a->filhos[i], r));
+}
+
 int isCheio(NoDoencas *a)
 {
     return a->nChaves == MAX_CHAVES;
@@ -604,13 +621,11 @@ void liberarNo(int id, ArvoreDoencas *a)
 
     NoDoencas *no = a->nosAbertos->nos[i];
 
-    // Caso esteja no final do vetor
-    if (i == a->nosAbertos->n - 1)
+    if (i == a->nosAbertos->n - 1) // Caso esteja no final do vetor
     {
         a->nosAbertos->nos[i] = NULL;
     }
-    // Caso esteja no meio do vetor
-    else
+    else // Caso esteja no meio do vetor
     {
         while (i < a->nosAbertos->n - 1)
         {
@@ -618,7 +633,7 @@ void liberarNo(int id, ArvoreDoencas *a)
             i++;
         }
     }
-    // Libera no dememoria
+    // Libera no de memoria
     a->nosAbertos->n -= 1;
     liberarNoArvoreDoencas(no);
 }
@@ -652,10 +667,11 @@ int persisteNoArq(NoDoencas *no)
     for (int i = 0; i < no->nChaves; i++)
     {
         Doenca *doenca = no->chaves[i];
-        fprintf(arq, "%d %s %d", doenca->id, doenca->nome, doenca->nSintomas);
+        fprintf(arq, "%d %s %d\n", doenca->id, doenca->nome, doenca->nSintomas);
         for (int j = 0; j < doenca->nSintomas; j++)
-            fprintf(arq, " %d", doenca->sintomas[j]);
-        fprintf(arq, "\n");
+        {
+            fprintf(arq, "%s\n", doenca->sintomas[j]);
+        }
     }
 
     // Filhos
@@ -705,13 +721,16 @@ NoDoencas *carregaArqNo(int id)
     // Chaves
     for (int i = 0; i < no->nChaves; i++)
     {
-        int nSintomas, *sintomas;
+        int nSintomas;
         char nome[MAX_NOME] = "";
-        fscanf(arq, "%d %s %d", &id, &nome, &nSintomas);
-        sintomas = (int *)malloc(nSintomas * sizeof(int));
+        fscanf(arq, "%d %s %d\n", &id, &nome, &nSintomas);
+        char **sintomas = (char **)malloc(nSintomas * sizeof(char *));
         for (int j = 0; j < nSintomas; j++)
-            fscanf(arq, " %d", &sintomas[j]);
-        fscanf(arq, "\n", NULL);
+        {
+            sintomas[j] = (char *)malloc(MAX_NOME * sizeof(char));
+            fgets(sintomas[j], MAX_NOME, arq);
+            sintomas[j][strcspn(sintomas[j], "\n")] = 0;
+        }
         no->chaves[i] = criaDoenca(id, nome, nSintomas, sintomas);
     }
 

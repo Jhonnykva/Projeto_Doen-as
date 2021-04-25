@@ -1,60 +1,78 @@
 #include "ProjetoDoenças.h"
-#include "Doenças.h"
-#include "Menu.h"
 
 int main(int argc, char **argv)
 {
-    unsigned int sintomas[3] = {1, 2, 3};
-
-    ArvoreDoencas *a = criaArvoreDoencas();
-    // ArvoreDoencas *a = carregaArvDoencas();
-
-    // imprimeArvore(a, getNo(a->raiz, a), 0);
-    // Doenca *d = NULL;
-    // d = getDoenca(98, a);
-    // imprimeDoenca(d);
-    // d = getDoenca(14, a);
-    // imprimeDoenca(d);
-    // d = getDoenca(12, a);
-    // imprimeDoenca(d);
-    // liberarArvoreDoencas(a);
-    // exit(0);
-    // return 0;
-    Doenca *doenca = NULL;
-    // Loop para teste
-    unsigned int ids[] = {10, 43, 1, 4, 7, 6, 2, 56, 12, 45, 65, 3, 14, 13, 11, 98, 79};
-    int max_ids = 17;
-    for (int i = 0; i < max_ids; i++)
+    int status = -2;
+    for (int i = 0; status == -2 && i < argc; i++)
     {
-        doenca = criaDoenca(ids[i], "Doenca", 3, &sintomas);
-        // imprimeDoenca(doenca);
-        inserirDoenca(doenca, a);
-        // imprimeArvore(a->raiz, 0);
-        printf("\n====== %d inserido ======\n", ids[i]);
-        putchar('\n');
-        // for (int i = 0; i < a->nosAbertos->n; i++)
-        //     printf(" %d", a->nosAbertos->nos[i]->id);
-        // putchar('\n');
+        if (argv[i][0] == '-' && argv[i][1] == 'o' && i + 1 < argc)
+        {
+
+            // printf("%s %d\n", argv[i + 1]), strcmp(argv[i + 1], "lstDoencas");
+
+            if (strcmp(argv[i + 1], "lstDoencas") == 0) // Listar doencas
+            {
+                status = lstDoencas(argc, argv);
+            }
+            else if (strcmp(argv[i + 1], "genDoencas") == 0) // Gerar doencas
+            {
+                status = genDoencas(argc, argv);
+            }
+            else if (strcmp(argv[i + 1], "buscarDoenca") == 0) // Buscar doenca
+            {
+                status = buscarDoenca(argc, argv);
+            }
+            else
+            {
+                printf("Operação NÃO definida :(\n");
+                imprimeOperacoes();
+            }
+        }
     }
-    //imprimeArvore(a, getNo(a->raiz, a), 0);
-    removerDoenca(a, 7);
-    printf("\n====== Removido 7 ======\n");
-    //imprimeArvore(a, getNo(a->raiz, a), 0);
-    removerDoenca(a, 43);
-    printf("\n====== Removido 43 ======\n");
-    //imprimeArvore(a, getNo(a->raiz, a), 0);
-    removerDoenca(a, 10);
-    printf("\n====== Removido 10 ======\n");
-    imprimeArvore(a, getNo(a->raiz, a), 0);
-    putchar('\n');
-    // for (int i = 0; i < a->nosAbertos->n; i++)
-    //     printf(" %d", a->nosAbertos->nos[i]->id);
-    // putchar('\n');
-    // putchar('-');
-    // putchar('\n');
-    NoDoencas *teste = carregaArqNo(5);
-    // eliminaDoenca(doenca);
+
+    return status;
+}
+
+int lstDoencas(int argc, char **argv)
+{
+    printf("Listar Doencas\n");
+    ArvoreDoencas *doencas = carregaArqArvDoencas();
+    if (doencas->nDoencas > 0)
+    {
+        imprimeDoencas(doencas, getNo(doencas->raiz, doencas));
+    }
+    else
+        printf("Nenhuma doença carregada. :(\n");
+
+    liberarArvoreDoencas(doencas);
+    return 0;
+}
+int genDoencas(int argc, char **argv)
+{
+    printf("Gerar Doencas\n");
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+        {
+            if (argv[i][1] == 'o' && i + 1 < argc)
+            {
+            }
+        }
+    }
+    return 0;
+}
+int buscarDoenca(int argc, char **argv)
+{
+    printf("Buscar Doencas\n");
     return 0;
 }
 
-//---------------------------- Associação da Tabela Hash com Árvore de doenças
+void imprimeOperacoes()
+{
+    printf("-----------------------------\n");
+    printf("ARGUMENTOS VÁLIDOS:\n");
+    printf("-----------------------------\n");
+    printf("op\t\tdesc\t[valores válidos]\n");
+    printf("-----------------------------\n");
+    printf("-o\t\tDefine a operação a executar\t[lstDoencas genDoencas buscarDoenca]\n");
+}

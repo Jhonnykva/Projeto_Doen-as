@@ -4,18 +4,17 @@
  * Estrutura de Doenças 
 ***/
 
-#define MAX_NOME 25
 
 typedef struct doencas
 {
   unsigned int id;
   char nome[MAX_NOME];
   unsigned int nSintomas;
-  unsigned int *sintomas;
+  char **sintomas;
 
 } Doenca;
 
-Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, unsigned int *sintomas);
+Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **sintomas);
 void eliminaDoenca(Doenca *doenca);
 void imprimeDoenca(Doenca *doenca);
 
@@ -80,6 +79,7 @@ void DoadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos);
 
 // Varias
 void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h);
+void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a);
 int isCheio(NoDoencas *a);
 int isVazio(NoDoencas *a);
 int isFolha(NoDoencas *a);
