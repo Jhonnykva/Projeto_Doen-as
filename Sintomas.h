@@ -1,17 +1,22 @@
 #include "include_principal.h"
 
-#define MAX_N_SINTOMA 50
+/**
+ * Sintomas
+ * **/
+
 typedef struct sintomas
 {
-    char nome[MAX_N_SINTOMA]; //nome do sintoma
-    int *doencaAssociada;     // inserir aqui doenças que estão assiciadas ao sintoma
-                              //associar no máximo 10 sintomas
-    int nDoencas;
+    char nome[MAX_NOME];  // Nome do sintoma
+    int nDoencas;         // Nro. doencas associadas
+    int *doencaAssociada; // Doencas associadas
 } Sintoma;
 
 Sintoma *criaSintoma(char *nomeSintoma);
 void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca);
 void liberaSintoma(Sintoma *sintoma);
+/**
+ * Tabela Hash de sintomas
+ * **/
 
 #define SINTOMAS_ARQ "sintomas.ths"
 
@@ -29,6 +34,7 @@ int funcaoHashSintoma(char nome_sintoma[], int M);
 void inserirSintoma(THSintomas *H, char nomeSintoma[]);
 void removerSintoma(THSintomas *H, char nomeSintoma[]);
 void buscarSintoma(THSintomas *H, char nomeSintoma[]);
+Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
 void freeTHSintomas(THSintomas *H);
 
 //--------TABELA HASH - FUNÇÕES SECUNDÁRIAS

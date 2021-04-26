@@ -38,7 +38,9 @@ void liberaSintoma(Sintoma *sintoma)
     // Libera sintoma
     free(sintoma);
 }
-
+/**
+ * Tabela Hash de sintomas
+ * **/
 //--------TABELA HASH - FUNÇÕES PRINCIPAIS
 int funcaoHashSintoma(char nome_sintoma[], int M)
 {
@@ -56,11 +58,9 @@ THSintomas *criarTHSintomas(int M)
     novaTabela->M = M;
     novaTabela->N = 0;
     novaTabela->estrutura_sintoma = (Sintoma **)malloc(M * sizeof(Sintoma *));
+    // Inicia ponteiros da lista
     for (int i = 0; i < novaTabela->M; i++)
-    {
-        //seta todos os ponteiros da lista pra nulo
         novaTabela->estrutura_sintoma[i] = NULL;
-    }
     return novaTabela;
 }
 
@@ -234,8 +234,12 @@ void freeTHSintomas(THSintomas *H)
 {
     for (int i = 0; i < H->M; i++)
     {
-        free(H->estrutura_sintoma[i]);
+        if (H->estrutura_sintoma[i] != NULL) // Libera sintomas
+            liberaSintoma(H->estrutura_sintoma[i]);
     }
+    // Libera vetor de sintomas
+    free(H->estrutura_sintoma);
+    // Libera tabela
     free(H);
 }
 
@@ -268,6 +272,10 @@ void imprimirTHCompleta(THSintomas *H)
             printf("\n");
         }
     }
+}
+
+Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
+{
 }
 
 //-------ARQUIVOS---------
@@ -366,11 +374,12 @@ THSintomas *carregaArqTHSintomas(int _M)
     // Aloca memoria para a tabela
     THSintomas *sintomas = criarTHSintomas(M);
     sintomas->N = N;
-    char *buffer = (char *)malloc(MAX_NOME * sizeof(char));
+
     // Obtem Chaves
     for (int n = 0; n < N; n++)
     {
         int i = -1;
+        char buffer[MAX_NOME] = "";
         // Carrega nome
         buffer[0] = '\0';
         fgets(buffer, MAX_NOME, arq);
@@ -385,7 +394,6 @@ THSintomas *carregaArqTHSintomas(int _M)
         // Coloca sintoma no seu indice
         sintomas->estrutura_sintoma[i] = sintoma;
     }
-    free(buffer);
     fclose(arq);
     return sintomas;
 }

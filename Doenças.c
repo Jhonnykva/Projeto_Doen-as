@@ -641,7 +641,7 @@ void liberarNo(int id, ArvoreDoencas *a)
 int persisteNoArq(NoDoencas *no)
 {
 #if DEBUG
-    printf("PESISTINDO...%d\n", no->id);
+    printf("PERSISTINDO...%d\n", no->id);
 #endif
     // Gera nome arquivo
     char fName[MAX_ARQ_BUFFER] = "", s_id[10];
@@ -667,19 +667,16 @@ int persisteNoArq(NoDoencas *no)
     for (int i = 0; i < no->nChaves; i++)
     {
         Doenca *doenca = no->chaves[i];
-        fprintf(arq, "%d %s %d\n", doenca->id, doenca->nome, doenca->nSintomas);
+        fprintf(arq, "%s\n", doenca->nome);
+        fprintf(arq, "%d %d\n", doenca->id, doenca->nSintomas);
         for (int j = 0; j < doenca->nSintomas; j++)
-        {
             fprintf(arq, "%s\n", doenca->sintomas[j]);
-        }
     }
 
     // Filhos
     if (!isFolha(no))
         for (int i = 0; i < no->nChaves + 1; i++)
-        {
             fprintf(arq, "%d\n", no->filhos[i]);
-        }
 
     return fclose(arq) == 0;
 }
@@ -717,13 +714,16 @@ NoDoencas *carregaArqNo(int id)
         printf("ERROR:carregaArqNo: inconsistência de informações. (%s)\n", fName);
         exit(1);
     }
-
     // Chaves
     for (int i = 0; i < no->nChaves; i++)
     {
         int nSintomas;
         char nome[MAX_NOME] = "";
-        fscanf(arq, "%d %s %d\n", &id, &nome, &nSintomas);
+        // Carrega nome
+        nome[0] = '\0';
+        fgets(nome, MAX_NOME, arq);
+        nome[strcspn(nome, "\n")] = 0;
+        fscanf(arq, "%d %d\n", &id, &nSintomas);
         char **sintomas = (char **)malloc(nSintomas * sizeof(char *));
         for (int j = 0; j < nSintomas; j++)
         {
@@ -733,7 +733,6 @@ NoDoencas *carregaArqNo(int id)
         }
         no->chaves[i] = criaDoenca(id, nome, nSintomas, sintomas);
     }
-
     // Filhos
     if (!isFolha(no))
         for (int i = 0; i < no->nChaves + 1; i++)
