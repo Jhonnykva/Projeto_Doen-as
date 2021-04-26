@@ -1,21 +1,27 @@
 #include "include_principal.h"
 
-
-
-
-typedef struct sintomas{
-
-    char nome[30];//nome do sintoma
-    char *doencaAssociada[10];// inserir aqui doenças que estão assiciadas ao sintoma
+#define MAX_N_SINTOMA 50
+typedef struct sintomas
+{
+    char nome[MAX_N_SINTOMA]; //nome do sintoma
+    int *doencaAssociada;     // inserir aqui doenças que estão assiciadas ao sintoma
                               //associar no máximo 10 sintomas
-}Sintoma;
+    int nDoencas;
+} Sintoma;
 
-typedef struct tabelaHashSintoma{
+Sintoma *criaSintoma(char *nomeSintoma);
+void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca);
+void liberaSintoma(Sintoma *sintoma);
+
+#define SINTOMAS_ARQ "sintomas.ths"
+
+typedef struct tabelaHashSintoma
+{
     Sintoma **estrutura_sintoma;
-    int M;//número de posições
-    int N;//número de itens
+    int M; //número de posições
+    int N; //número de itens
 
-}THSintomas;
+} THSintomas;
 
 //--------TABELA HASH - FUNÇÕES PRINCIPAIS
 THSintomas *criarTHSintomas(int M);
@@ -24,9 +30,6 @@ void inserirSintoma(THSintomas *H, char nomeSintoma[]);
 void removerSintoma(THSintomas *H, char nomeSintoma[]);
 void buscarSintoma(THSintomas *H, char nomeSintoma[]);
 void freeTHSintomas(THSintomas *H);
-
-
-
 
 //--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int isFull(THSintomas *H);
@@ -39,6 +42,8 @@ char *gerarNomeSintoma(const char nomeSintoma[]);
 int *vetor_linhas(FILE* arquivo);
 void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int *v);*/
 void carregarTHSintoma(THSintomas *H);
+int salvarTHSSintoma(THSintomas *h);
+THSintomas *carregaArqTHSintomas();
 
 //--------OUTAS FUNÇÕES
 void relacionarDoencaSintoma();
