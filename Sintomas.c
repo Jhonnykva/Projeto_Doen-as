@@ -31,6 +31,34 @@ void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca)
     }
 }
 
+void removerDoencaSintoma(Sintoma *sintoma, int idDoenca)
+{
+    // Verifica que o ponteiro seja valido
+    if (sintoma == NULL)
+        return;
+    int pos = -1;
+    do
+    {
+        pos++;
+    } while (pos < sintoma->nDoencas && sintoma->doencaAssociada[pos] != idDoenca);
+
+    if (pos < sintoma->nDoencas)
+    {
+        sintoma->doencaAssociada[pos] = -1;
+        sintoma->nDoencas -= 1;
+
+        if (sintoma->nDoencas == 0) // CASO: não tenha nenhum sintoma
+        {
+            free(sintoma->doencaAssociada);
+            sintoma->doencaAssociada = NULL;
+        }
+        else // CASO: ainda tenha algum sintoma
+        {
+            sintoma->doencaAssociada = (int *)realloc(sintoma->doencaAssociada, sintoma->nDoencas * sizeof(int));
+        }
+    }
+}
+
 void liberaSintoma(Sintoma *sintoma)
 {
     // Libera vetor de doencas
@@ -71,78 +99,79 @@ void inserirSintoma(THSintomas *H, char nomeSintoma[])
     if (verificaSintomaExistente(nomeSintoma, H))
     {
         printf("Nao e possivel inserir sintoma, pois este sintoma ja existe\n");
-        return;
+        exit(1);
     }
     else if (isFull(H))
     {
-        printf("Nao e possivel inserir sintoma, pois a tabela esta cheia");
-        return;
+        printf("Nao e possivel inserir sintoma, pois a tabela esta cheia\n");
+        exit(1);
     }
-    else
-    {
-        int localInsercao = funcaoHashSintoma(nomeSintoma, H->M);
+    int localInsercao = funcaoHashSintoma(nomeSintoma, H->M);
 
-        //CRIAÇÃO DE SITNOMA
-        Sintoma *novoSintoma = (Sintoma *)malloc(sizeof(Sintoma));
-        strcpy(novoSintoma->nome, nomeSintoma);
-        H->N++;
-        novoSintoma->nDoencas = 2;
-        novoSintoma->doencaAssociada = (int *)malloc(2 * sizeof(int));
-        novoSintoma->doencaAssociada[0] = 1;
-        //TRATAMENTO DE COLISÃO
-        while (H->estrutura_sintoma[localInsercao] != NULL /*||
+    //CRIAÇÃO DE SITNOMA
+    Sintoma *novoSintoma = (Sintoma *)malloc(sizeof(Sintoma));
+    strcpy(novoSintoma->nome, nomeSintoma);
+    H->N++;
+
+    //TRATAMENTO DE COLISÃO
+    while (H->estrutura_sintoma[localInsercao] != NULL /*||
               strcmp(H->estrutura_sintoma[localInsercao]->nome, "Sintoma Removido")!=0*/
-        )
-        {
-            localInsercao = (localInsercao + 1) % (H->M);
-        }
-        //ARMAZENAMENTO DO NOME DO SINTOMA NO ARQUIVO DE NOMES
-        FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a");
-        char fnomeSintoma[30] = "";
-        strcat(fnomeSintoma, novoSintoma->nome);
-        strcat(fnomeSintoma, ".txt");
-        strcat(fnomeSintoma, "\0");
-        fprintf(arquivoNomeSintoma, "%s\n", fnomeSintoma);
-        fclose(arquivoNomeSintoma);
-
-        //CRIAÇÃO DO ARQUIVO ESPECÍFICO DO SINTOMA
-
-        FILE *fSintoma = fopen(fnomeSintoma, "w");
-        fprintf(fSintoma, "%s\n", novoSintoma->nome);
-        fclose(fSintoma);
-        novoSintoma->doencaAssociada[1] = localInsercao;
-
-        //ANEXANDO O SINTOMA À TABELA
-        H->estrutura_sintoma[localInsercao] = novoSintoma;
-        printf("\nSintoma %s inserido", nomeSintoma);
+    )
+    {
+        localInsercao = (localInsercao + 1) % (H->M);
     }
+
+    //ARMAZENAMENTO DO NOME DO SINTOMA NO ARQUIVO DE NOMES
+    // FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a");
+    // char fnomeSintoma[30] = "";
+    // strcat(fnomeSintoma, novoSintoma->nome);
+    // strcat(fnomeSintoma, ".txt");
+    // strcat(fnomeSintoma, "\0");
+    // fprintf(arquivoNomeSintoma, "%s\n", fnomeSintoma);
+    // fclose(arquivoNomeSintoma);
+
+    //CRIAÇÃO DO ARQUIVO ESPECÍFICO DO SINTOMA
+
+    // FILE *fSintoma = fopen(fnomeSintoma, "w");
+    // fprintf(fSintoma, "%s\n", novoSintoma->nome);
+    // fclose(fSintoma);
+
+    //ANEXANDO O SINTOMA À TABELA
+    H->estrutura_sintoma[localInsercao] = novoSintoma;
+#if DEBUG
+    printf("Sintoma %s inserido\n", nomeSintoma);
+#endif
 }
 
 void removerSintoma(THSintomas *H, char nomeSintoma[])
 {
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
+    // Verifica se o sintoma existe
     if (H->estrutura_sintoma[fH] == NULL)
-        printf("\nSintoma nao removido porque não existe.\n");
-    else
     {
-        //remove(gerarNomeSintoma(nomeSintoma));
-        //remove está comentado pois só funciona em linux
+        printf("\nSintoma nao removido porque não existe.\n");
+        return;
+    }
+    //remove(gerarNomeSintoma(nomeSintoma));
+    //remove está comentado pois só funciona em linux
 
-        //REMOVENDO O SINTOMA DA TABELA
-        H->estrutura_sintoma[fH]->nome[30] = "Sintoma Removido";
-        H->N--;
-        printf("\nSintoma %s removido", nomeSintoma);
+    //REMOVENDO O SINTOMA DA TABELA
+    liberaSintoma(H->estrutura_sintoma[fH]);
+    H->estrutura_sintoma[fH] = criaSintoma("Sintoma Removido");
+    H->N--;
+#if DEBUG
+    printf("Sintoma %s removido\n", nomeSintoma);
+#endif
+    //REMOVENDO SINTOMA DO ARQUIVO DE NOMES DE SINTOMAS
+    //AJUSTAR DEPOIS
+    // FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a+");
+    // char aux[100] = "", dadosArquivo[500] = "", fnSintoma[30] = "";
+    // int i = 0, j = 0, posicao1 = 0, posicao2, contAux = 0;
 
-        //REMOVENDO SINTOMA DO ARQUIVO DE NOMES DE SINTOMAS
-        //AJUSTAR DEPOIS
-        FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a+");
-        char aux[100] = "", dadosArquivo[500] = "", fnSintoma[30] = "";
-        int i = 0, j = 0, posicao1 = 0, posicao2, contAux = 0;
-
-        strcat(fnSintoma, nomeSintoma);
-        strcat(fnSintoma, ".txt");
-        strcat(fnSintoma, "\0");
-        /*
+    // strcat(fnSintoma, nomeSintoma);
+    // strcat(fnSintoma, ".txt");
+    // strcat(fnSintoma, "\0");
+    /*
         if(arquivoNomeSintoma==NULL){
             printf("ArquivoNomeSintoma.txt não foi aberto");
         }
@@ -150,7 +179,7 @@ void removerSintoma(THSintomas *H, char nomeSintoma[])
         while(fgets(aux, 100, arquivoNomeSintoma)!=NULL){
             strcat(dadosArquivo, aux);
         }*/
-        /*while(fnSintoma[contAux]!='\0'){
+    /*while(fnSintoma[contAux]!='\0'){
             contAux++;
         }
         for(i=0; dadosArquivo[i]!=NULL; i++){
@@ -178,16 +207,15 @@ void removerSintoma(THSintomas *H, char nomeSintoma[])
             posicao2++;
         }
         dadosArquivo[posicao2+1]='\0';*/
-        //printf("\n%s", dadosArquivo);
+    //printf("\n%s", dadosArquivo);
 
-        fclose(arquivoNomeSintoma);
-        //arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "w");
-        //fputs(dadosArquivo, arquivoNomeSintoma);
+    // fclose(arquivoNomeSintoma);
+    //arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "w");
+    //fputs(dadosArquivo, arquivoNomeSintoma);
 
-        //REMOVENDO DELETANDO ARQUIVO ESPECÍFICO DO SINTOMA
+    //REMOVENDO DELETANDO ARQUIVO ESPECÍFICO DO SINTOMA
 
-        remove(fnSintoma);
-    }
+    // remove(fnSintoma);
 }
 
 void buscarSintoma(THSintomas *H, char nomeSintoma[])
@@ -230,7 +258,7 @@ void buscarSintoma(THSintomas *H, char nomeSintoma[])
     }
 }
 
-void freeTHSintomas(THSintomas *H)
+void liberaTHSintomas(THSintomas *H)
 {
     for (int i = 0; i < H->M; i++)
     {
@@ -276,6 +304,26 @@ void imprimirTHCompleta(THSintomas *H)
 
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
 {
+    if (nomeSintoma == NULL)
+    {
+        printf("ERROR:getSintoma: nome de sintoma nulo. :(\n");
+        exit(1);
+    }
+    // Obtem posicao inicial
+    int fH = funcaoHashSintoma(nomeSintoma, H->M);
+    // Verifica se a posicao inicial contem um ponteiro valido
+    if (H->estrutura_sintoma[fH] != NULL)
+    {
+        int i = 0;
+        // Percorre tabela até encontrar o sintoma
+        while (i < H->M && H->estrutura_sintoma[fH + i] != NULL)
+        {
+            if (strcmp(nomeSintoma, H->estrutura_sintoma[fH]->nome) == 0)
+                return H->estrutura_sintoma[fH + i]; // Retorna ponteiro do sintoma
+            i++;
+        }
+    }
+    return NULL;
 }
 
 //-------ARQUIVOS---------

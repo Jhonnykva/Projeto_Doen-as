@@ -13,6 +13,7 @@ typedef struct sintomas
 
 Sintoma *criaSintoma(char *nomeSintoma);
 void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca);
+void removerDoencaSintoma(Sintoma *sintoma, int idDoenca);
 void liberaSintoma(Sintoma *sintoma);
 /**
  * Tabela Hash de sintomas
@@ -35,7 +36,7 @@ void inserirSintoma(THSintomas *H, char nomeSintoma[]);
 void removerSintoma(THSintomas *H, char nomeSintoma[]);
 void buscarSintoma(THSintomas *H, char nomeSintoma[]);
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
-void freeTHSintomas(THSintomas *H);
+void liberaTHSintomas(THSintomas *H);
 
 //--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int isFull(THSintomas *H);
