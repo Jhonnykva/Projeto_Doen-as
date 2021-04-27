@@ -4,7 +4,6 @@
  * Estrutura de Doenças 
 ***/
 
-
 typedef struct doencas
 {
   unsigned int id;
@@ -17,6 +16,8 @@ typedef struct doencas
 Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **sintomas);
 void eliminaDoenca(Doenca *doenca);
 void imprimeDoenca(Doenca *doenca);
+void adicionaSintoma(Doenca *doenca, char *nomeSintoma);
+void removeSintoma(Doenca *doenca, char *nomeSintoma);
 
 /*** 
  * Árvore Doenças 
@@ -34,7 +35,7 @@ void imprimeDoenca(Doenca *doenca);
 typedef struct no_doencas
 {
   int id;                     // Identificador unico do no
-  int folha, nChaves;        //bool
+  int folha, nChaves;         //bool
   Doenca *chaves[MAX_CHAVES]; //limite superior
   // struct no_doencas *filhos[MAX_FILHOS];
   int filhos[MAX_FILHOS];
@@ -51,7 +52,7 @@ typedef struct v_nos
 typedef struct arvore_doenca
 {
   int nDoencas; // Nro. de doencas
-  int raiz;      // Raiz da arvore
+  int raiz;     // Raiz da arvore
 
   Vnos *nosAbertos; // Cache de nos abertos em memoria
   int maxNoId;      // Nro do ultimo id de no asignado
@@ -83,8 +84,8 @@ void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a);
 int isCheio(NoDoencas *a);
 int isVazio(NoDoencas *a);
 int isFolha(NoDoencas *a);
-Doenca* getDoenca(int id, ArvoreDoencas *a);
-Doenca* getChave(int id, NoDoencas* n, ArvoreDoencas *a);
+Doenca *getDoenca(int id, ArvoreDoencas *a);
+Doenca *getChave(int id, NoDoencas *n, ArvoreDoencas *a);
 
 // Carga/Persistencia de nos;
 ArvoreDoencas *carregaArvDoencas();
@@ -96,4 +97,4 @@ void liberarNo(int id, ArvoreDoencas *a);
 int persisteNoArq(NoDoencas *no);
 int persisteCabDoencas(ArvoreDoencas *a);
 NoDoencas *carregaArqNo(int id);
-ArvoreDoencas* carregaArqArvDoencas();
+ArvoreDoencas *carregaArqArvDoencas();

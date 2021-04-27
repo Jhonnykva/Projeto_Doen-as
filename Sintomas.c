@@ -46,16 +46,12 @@ void removerDoencaSintoma(Sintoma *sintoma, int idDoenca)
     {
         sintoma->doencaAssociada[pos] = -1;
         sintoma->nDoencas -= 1;
-
-        if (sintoma->nDoencas == 0) // CASO: não tenha nenhum sintoma
+        for (int i = pos; i < sintoma->nDoencas; i++)
         {
-            free(sintoma->doencaAssociada);
-            sintoma->doencaAssociada = NULL;
+            printf("%d %d %d\n", pos, i, sintoma->nDoencas);
+            sintoma->doencaAssociada[i] = sintoma->doencaAssociada[i + 1];
         }
-        else // CASO: ainda tenha algum sintoma
-        {
-            sintoma->doencaAssociada = (int *)realloc(sintoma->doencaAssociada, sintoma->nDoencas * sizeof(int));
-        }
+        sintoma->doencaAssociada = (int *)realloc(sintoma->doencaAssociada, sintoma->nDoencas * sizeof(int));
     }
 }
 

@@ -12,7 +12,7 @@ Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **s
         printf("ERROR: Doenca::criaDoenca: O nome não pode ser NULL\n");
         exit(1);
     }
-    else if (sintomas == NULL)
+    else if (nSintomas > 0 && sintomas == NULL)
     {
         printf("ERROR: Doenca::criaDoenca: O array de sintomas não pode ser NULL\n");
         exit(1);
@@ -20,9 +20,9 @@ Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **s
 
     Doenca *doenca = (Doenca *)malloc(sizeof(Doenca));
     doenca->id = id;
-    strcpy(doenca->nome, nome); // Falta tratar o tamanho do nome
+    strcpy(doenca->nome, nome);
     doenca->nSintomas = nSintomas;
-    doenca->sintomas = sintomas;
+    doenca->sintomas = nSintomas > 0 ? sintomas : NULL;
 
     return doenca;
 }
@@ -42,10 +42,50 @@ void imprimeDoenca(Doenca *doença)
 {
     if (doença != NULL)
     {
-        printf("%05d || %s \t|| ", doença->id, doença->nome);
+        printf("%5d || %-50s \t|| ", doença->id, doença->nome);
         for (int j = 0; j < doença->nSintomas; j++)
             printf("%s, ", doença->sintomas[j]);
         putchar('\n');
+    }
+}
+
+void adicionaSintoma(Doenca *doenca, char *nomeSintoma)
+{
+    // Verifica que o ponteiro seja valido
+    if (doenca == NULL)
+        return;
+    if (doenca->nSintomas == 0) // CASO: não tenha nenhum sintoma
+        doenca->sintomas = NULL;
+
+    doenca->nSintomas += 1;
+    doenca->sintomas = (char **)realloc(doenca->sintomas, doenca->nSintomas * sizeof(char *));
+
+    doenca->sintomas[doenca->nSintomas - 1] = (char *)malloc(MAX_NOME * sizeof(char));
+    strcpy(doenca->sintomas[doenca->nSintomas - 1], nomeSintoma);
+}
+
+void removeSintoma(Doenca *doenca, char *nomeSintoma)
+{
+    // Verifica que o ponteiro seja valido
+    if (doenca == NULL)
+        return;
+    // Busca posição do sintoma
+    int pos = -1;
+    do
+        pos++;
+    while (pos < doenca->nSintomas && strcmp(doenca->sintomas[pos], nomeSintoma) != 0);
+    // Verifica validez da posição
+    if (pos < doenca->nSintomas)
+    {
+        // Libera memoria
+        free(doenca->sintomas[pos]);
+        // Atualiza nro de sintomas
+        doenca->nSintomas -= 1;
+        // Move lugar vazio para o final
+        for (int i = pos; i < doenca->nSintomas; i++)
+            doenca->sintomas[i] = doenca->sintomas[i + 1];
+        // Atualiza tamanho do vetor
+        doenca->sintomas = (char **)realloc(doenca->sintomas, doenca->nSintomas * sizeof(char *));
     }
 }
 
@@ -494,9 +534,10 @@ int isFolha(NoDoencas *a)
 
 Doenca *getDoenca(int id, ArvoreDoencas *a)
 {
+    // Verifica validez de arvore
     if (a == NULL)
         return NULL;
-
+    // Busca e retorna ponteiro da doenca
     return getChave(id, getNo(a->raiz, a), a);
 };
 
@@ -524,8 +565,8 @@ Doenca *getChave(int id, NoDoencas *n, ArvoreDoencas *a)
 // Carga/Persistencia de nos;
 ArvoreDoencas *carregaArvDoencas()
 {
-    // Falta carregar arvores base desde arquivo
     ArvoreDoencas *a = carregaArqArvDoencas();
+    // Caso não exista arquivo de arvore, cria uma nova
     if (a == NULL)
         return criaArvoreDoencas();
 
@@ -569,10 +610,10 @@ void persistirArvDoencas(ArvoreDoencas *a)
 {
     int status = 1;
     status = status && persisteCabDoencas(a);
+    // Persiste nós
     for (int i = a->nosAbertos->n - 1; status && i >= 0; i--)
-    {
         status = status && persisteNoArq(a->nosAbertos->nos[i]);
-    }
+    // Verifica estado final da operação
     if (!status)
     {
         printf("ERROR:persistirArvDoencas: não foi possível persistir as doenças.");
@@ -583,27 +624,19 @@ void persistirArvDoencas(ArvoreDoencas *a)
 void persistirNo(int id, ArvoreDoencas *a)
 {
     int i = a->nosAbertos->n - 1;
+    // Pesquisa posição de nó
     while (i >= 0 && a->nosAbertos->nos[i]->id == id)
         --i;
-
     if (i < 0)
         return;
-
-    /*
-        Falta implementar persistencia no arquivo
-    */
+    // Persiste nó
     persisteNoArq(a->nosAbertos->nos[i]);
 }
 
 void liberarNosAbertos(ArvoreDoencas *a)
 {
     while (a->nosAbertos->n > 0)
-    {
-        // if (a->nosAbertos->nos[0]->id != a->raiz) // FALTA VERIFICAR COMO DEIXAR A RAIZ alocada
-        // {
         liberarNo(a->nosAbertos->nos[0]->id, a);
-        // }
-    }
 }
 
 void liberarNo(int id, ArvoreDoencas *a)
