@@ -1,4 +1,4 @@
-#include "sintomas.h"
+#include "Sintomas.h"
 
 /**
  * Sintomas
@@ -405,12 +405,12 @@ THSintomas *carregaArqTHSintomas(int _M)
     FILE *arq = fopen(fName, "r");
     // Verifica se o arquivo existe
     if (arq == NULL)
-        return criarTHSintomas(_M);
+        return _M > 0 ? criarTHSintomas(_M) : NULL;
 
     // Obtem informacoes base da tabela
     int N = -1, M = -1;
     fscanf(arq, "%d %d\n", &N, &M);
-    if (_M != M)
+    if (_M > 0 && _M != M)
     {
         printf("ERROR:carregaArqTHSintomas inconsistencia entre o tamanho esperado e obtido da tabela hash %d-%d\n", _M, M);
         exit(1);
