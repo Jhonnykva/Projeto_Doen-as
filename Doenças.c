@@ -165,7 +165,9 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
         exit(1);
     }
     // Limpa cache de nos
+#if AUTO_SALVAR
     liberarNosAbertos(a);
+#endif
     if (a->nDoencas == 0) // CASO: Arvore vazia
     {
         NoDoencas *n_raiz = criaNoArvoreDoencas(a, 1);
@@ -197,7 +199,9 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
         }
     }
     a->nDoencas += 1;
+#if AUTO_SALVAR
     persistirArvDoencas(a);
+#endif
 }
 
 NoDoencas *inserirNo(ArvoreDoencas *r, Doenca *doenca, NoDoencas *a)

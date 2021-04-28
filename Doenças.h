@@ -23,7 +23,7 @@ void removeSintoma(Doenca *doenca, char *nomeSintoma);
  * Árvore Doenças 
 ***/
 
-#define T 2
+#define T 1000
 #define MAX_CHAVES 2 * T - 1
 #define MIN_CHAVES T - 1
 #define MAX_FILHOS 2 * T

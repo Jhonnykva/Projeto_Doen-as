@@ -1,5 +1,5 @@
 #include "include_principal.h"
-
+#include <time.h>
 #include "Doenças.h"
 #include "Sintomas.h"
 

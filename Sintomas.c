@@ -88,11 +88,11 @@ THSintomas *criarTHSintomas(int M)
     return novaTabela;
 }
 
-void inserirSintoma(THSintomas *H, char nomeSintoma[])
+void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 {
     //esta função adiciona o sintoma a tabela hash e cria o
     //arquivo que representa este sintoma
-    if (verificaSintomaExistente(nomeSintoma, H))
+    if (getSintoma(H, sintoma) != NULL)
     {
         printf("Nao e possivel inserir sintoma, pois este sintoma ja existe\n");
         exit(1);
@@ -102,11 +102,9 @@ void inserirSintoma(THSintomas *H, char nomeSintoma[])
         printf("Nao e possivel inserir sintoma, pois a tabela esta cheia\n");
         exit(1);
     }
-    int localInsercao = funcaoHashSintoma(nomeSintoma, H->M);
 
-    //CRIAÇÃO DE SITNOMA
-    Sintoma *novoSintoma = (Sintoma *)malloc(sizeof(Sintoma));
-    strcpy(novoSintoma->nome, nomeSintoma);
+    int localInsercao = funcaoHashSintoma(sintoma->nome, H->M);
+
     H->N++;
 
     //TRATAMENTO DE COLISÃO
@@ -133,7 +131,7 @@ void inserirSintoma(THSintomas *H, char nomeSintoma[])
     // fclose(fSintoma);
 
     //ANEXANDO O SINTOMA À TABELA
-    H->estrutura_sintoma[localInsercao] = novoSintoma;
+    H->estrutura_sintoma[localInsercao] = sintoma;
 #if DEBUG
     printf("Sintoma %s inserido\n", nomeSintoma);
 #endif

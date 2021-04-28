@@ -32,7 +32,7 @@ typedef struct tabelaHashSintoma
 //--------TABELA HASH - FUNÇÕES PRINCIPAIS
 THSintomas *criarTHSintomas(int M);
 int funcaoHashSintoma(char nome_sintoma[], int M);
-void inserirSintoma(THSintomas *H, char nomeSintoma[]);
+void inserirSintoma(THSintomas *H, Sintoma *sintoma);
 void removerSintoma(THSintomas *H, char nomeSintoma[]);
 void buscarSintoma(THSintomas *H, char nomeSintoma[]);
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
