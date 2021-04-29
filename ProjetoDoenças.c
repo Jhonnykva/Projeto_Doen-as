@@ -22,6 +22,10 @@ int main(int argc, char **argv)
             {
                 status = buscarDoenca(argc, argv);
             }
+            else if (strcmp(argv[i + 1], "buscarDoencas") == 0) // Buscar doencas por sintomas
+            {
+                status = buscarDoencas(argc, argv);
+            }
             else
             {
                 printf("Operação NÃO definida :(\n");
@@ -47,17 +51,20 @@ int lstDoencas(int argc, char **argv)
     liberarArvoreDoencas(doencas);
     return 0;
 }
+
 int genDoencas(int argc, char **argv)
 {
     printf("Gerar Doencas\n");
     srand(time(NULL));
     // Obtem parametros
-    int n = -1;
+    int n = -1, print = 0;
     for (int i = 0; i < argc; i++)
         if (argv[i][0] == '-')
         {
             if (argv[i][1] == 'n' && i + 1 < argc)
-                sscanf(argv[i + 1], "%d", &n);
+                sscanf(argv[++i], "%d", &n);
+            else if (argv[i][1] == 'p')
+                print = 1;
         }
     // Valida nro de doencas a gerar
     if (n <= 0)
@@ -66,9 +73,7 @@ int genDoencas(int argc, char **argv)
         exit(1);
     }
     if (n >= INT32_MAX)
-    {
         n = INT32_MAX / 2;
-    }
     // Cria estruturas de dados
     ArvoreDoencas *aDoencas = criaArvoreDoencas();
     THSintomas *tSintomas = criarTHSintomas(n * 2);
@@ -113,9 +118,8 @@ int genDoencas(int argc, char **argv)
             adicionaSintoma(doencas[i], sintomas[(i + j * nSintD) % nSintomas]);
             adicionaDoencaSintoma(sintomas[(i + j * nSintD) % nSintomas], doencas[i]->id);
         }
-        // Insere doenca na arvores
-        // inserirDoenca(doencas[i], aDoencas);
     }
+    // Desorganiza vetor
     for (i = 0; i < nDoencas; i++)
     {
         int j = rand() % nDoencas;
@@ -123,18 +127,16 @@ int genDoencas(int argc, char **argv)
         doencas[i] = doencas[j];
         doencas[j] = tmp;
     }
+    // Insere doencas na arvore
     for (i = 0; i < nDoencas; i++)
-
-    {
-        printf("INSERINDO %d\n", doencas[i]->id);
         inserirDoenca(doencas[i], aDoencas);
-    }
 
     // Persiste Arvore de doencas e Tabela de sintomas
     persistirArvDoencas(aDoencas);
     salvarTHSSintoma(tSintomas);
     // Imprime doencas geradas
-    // imprimeDoencas(aDoencas, getNo(aDoencas->raiz, aDoencas));
+    if (print)
+        imprimeDoencas(aDoencas, getNo(aDoencas->raiz, aDoencas));
     // Libera estruturas
     liberarArvoreDoencas(aDoencas);
     liberaTHSintomas(tSintomas);
@@ -146,6 +148,129 @@ int genDoencas(int argc, char **argv)
 int buscarDoenca(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
+    // Obtem parametros
+    int n = -1, id = -1;
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+        {
+            if (strcmp(argv[i], "-id") == 0 && i + 1 < argc)
+                sscanf(argv[++i], "%d", &id);
+        }
+    }
+    if (id < 0)
+    {
+        printf("ID inválido. :(\n");
+        return 1;
+    }
+    // Carrega arvore
+    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    // Busca doenca
+    Doenca *doenca = getDoenca(id, aDoencas);
+    // Imprime doenca caso exista
+    if (doenca == NULL)
+        printf("Doença %d não encontrada. :(\n", id);
+    else
+        imprimeDoenca(doenca);
+    //  Libera memoria
+    liberarArvoreDoencas(aDoencas);
+    return 0;
+}
+
+int buscarDoencas(int argc, char **argv)
+{
+    printf("Buscar Doencas\n");
+    // Obtem parametros
+    int nSintomas = 0;                                                    // Nro. de sintomas
+    char bSintomas[MAX_BUFFER_SINTOMAS] = "",                             // Buffer de string de sintomas
+        *aux = NULL;                                                      // Ponteiro auxiliar
+    char **nomeSintomas = (char **)malloc(MAX_SINTOMAS * sizeof(char *)); // Vetor de sintomas
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+            if (strcmp(argv[i], "-sintomas") == 0 && i + 1 < argc)
+            {
+                while (i + 1 < argc && argv[i + 1][0] != '-')
+                    strcat(bSintomas, argv[++i]);
+            }
+    }
+
+    // Separa nome de sintomas
+    aux = strtok(bSintomas, ",");
+    while (aux != NULL && nSintomas < MAX_SINTOMAS)
+    {
+        if (aux != NULL)
+            nomeSintomas[nSintomas++] = aux;
+        aux = strtok(NULL, ",");
+    }
+
+    // Valida nro de sintomas
+    if (nSintomas <= 0)
+    {
+        printf("Sem sintomas válidos. :(\n");
+        return 1;
+    }
+
+    // Carrega estruturas
+    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    THSintomas *tSintomas = carregaArqTHSintomas(-1);
+    // Busca sintomas
+    Sintoma **sintomas = (Sintoma **)malloc(nSintomas * sizeof(Sintoma *));
+    int nSintVal = 0;
+    for (int i = 0; i < nSintomas; i++)
+    {
+        sintomas[i] = getSintoma(tSintomas, nomeSintomas[i]);
+        if (sintomas[i] != NULL)
+            nSintVal++;
+    }
+
+    int maxDoencas = MAX_SINTOMAS * nSintVal, nDoencas = 0;
+    BuscaDoencas *doencas = (BuscaDoencas *)malloc(maxDoencas * sizeof(BuscaDoencas));
+    // Busca doencas
+    for (int i = 0; i < nSintVal; i++)
+    {
+        for (int j = 0; j < sintomas[i]->nDoencas; j++)
+        {
+            Doenca *doenca = getDoenca(sintomas[i]->doencaAssociada[j], aDoencas);
+            if (doenca != NULL)
+            {
+                // Atualiza contador de nro de sintomas que levam a mesma doenca
+                int k;
+                for (k = 0; k < nDoencas; k++)
+                {
+                    if (doencas[k].doenca->id == doenca->id)
+                        doencas[k].n += 1;
+                }
+                if (k >= nDoencas)
+                {
+                    if (nDoencas + 1 >= maxDoencas)
+                    {
+                        maxDoencas += maxDoencas / 2;
+                        doencas = (BuscaDoencas *)realloc(doencas, maxDoencas * sizeof(BuscaDoencas));
+                    }
+                    doencas[k].doenca = doenca;
+                    doencas[k].n = 1;
+                    nDoencas++;
+                }
+            }
+        }
+    }
+
+    printf("SINTOMAS %d/%d -> DOENCAS %d\n", nSintVal, nSintomas, nDoencas);
+    // Utiliza heap-sort para organizar por nro de sintomas que contem a doenca
+    heap_sort(doencas, nDoencas);
+    for (int i = 0; i < nDoencas; i++)
+    {
+        printf("%d/%d ||\t", doencas[i].n, nSintomas);
+        imprimeDoenca(doencas[i].doenca);
+    }
+
+    // Libera memoria
+    liberaTHSintomas(tSintomas);
+    liberarArvoreDoencas(aDoencas);
+    free(nomeSintomas);
+    free(sintomas);
+    free(doencas);
 
     return 0;
 }
@@ -218,4 +343,55 @@ void imprimeOperacoes()
     // persistirArvDoencas(a);
     // imprimeDoencas(a, getNo(a->raiz, a));
     // liberarArvoreDoencas(a);
+}
+
+int esquerda(int i)
+{
+    return (i * 2) + 1;
+}
+
+int direita(int i)
+{
+    return (i * 2) + 2;
+}
+
+void trocar(BuscaDoencas v[], int a, int b)
+{
+    BuscaDoencas aux = v[a];
+    v[a] = v[b];
+    v[b] = aux;
+}
+
+void max_heapify(BuscaDoencas *v, int n, int i)
+{
+    int esq = esquerda(i),
+        dir = direita(i),
+        maior = i;
+
+    if (esq < n && v[maior].n <= v[esq].n)
+        maior = esq;
+
+    if (dir < n && v[maior].n <= v[dir].n)
+        maior = dir;
+
+    if (maior != i)
+    {
+        trocar(v, i, maior);
+        max_heapify(v, n, maior);
+    }
+}
+void build_max_heap(BuscaDoencas *v, int n)
+{
+    for (int i = n / 2 - 1; i >= 0; i--)
+        max_heapify(v, n, i);
+}
+
+void heap_sort(BuscaDoencas v[], int n)
+{
+    build_max_heap(v, n);
+    for (int i = n - 1; i >= 1; i--)
+    {
+        trocar(v, 0, i);
+        max_heapify(v, --n, 0);
+    }
 }

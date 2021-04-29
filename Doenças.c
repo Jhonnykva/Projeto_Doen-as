@@ -42,7 +42,7 @@ void imprimeDoenca(Doenca *doença)
 {
     if (doença != NULL)
     {
-        printf("%5d || %-50s \t|| ", doença->id, doença->nome);
+        printf("%8d || %-50s \t|| ", doença->id, doença->nome);
         for (int j = 0; j < doença->nSintomas; j++)
             printf("%s, ", doença->sintomas[j]);
         putchar('\n');
