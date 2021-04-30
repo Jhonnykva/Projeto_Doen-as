@@ -83,7 +83,7 @@ int genDoencas(int argc, char **argv)
         n = INT32_MAX / 2;
     // Cria estruturas de dados
     ArvoreDoencas *aDoencas = criaArvoreDoencas();
-    THSintomas *tSintomas = criarTHSintomas(n * 2);
+    THSintomas *tSintomas = criarTHSintomas(n + n / 5);
 
     int nSintomas = n, nDoencas = n;
     printf("Gerando %d sintomas.\n", n);
@@ -197,10 +197,7 @@ int buscarDoencas(int argc, char **argv)
     {
         if (argv[i][0] == '-')
             if (strcmp(argv[i], "-sintomas") == 0 && i + 1 < argc)
-            {
-                while (i + 1 < argc && argv[i + 1][0] != '-')
-                    strcat(bSintomas, argv[++i]);
-            }
+                strncat(bSintomas, argv[++i], MAX_BUFFER_SINTOMAS - 1);
     }
 
     // Separa nome de sintomas
@@ -350,8 +347,51 @@ int addDoenca(int argc, char **argv)
     liberaTHSintomas(tSintomas);
     return 0;
 }
+
 int rmDoenca(int argc, char **argv)
 {
+    // Obtem parametros
+    int id = -1;
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+            if (strcmp(argv[i], "-id") == 0 && i + 1 < argc)
+                sscanf(argv[++i], "%d", &id);
+    }
+    //Validacoes
+    if (id < 0)
+    {
+        printf("ID %d inválido. :(\n", id);
+        return 1;
+    }
+    // Carrega estruturas
+    printf("Carregando doenças...\n");
+    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    THSintomas *tSintomas = carregaArqTHSintomas();
+    // Busca doenca
+    Doenca *doenca = getDoenca(id, aDoencas);
+    if (doenca == NULL)
+    {
+        printf("Doença %d não encontrada. :(\n");
+        return 1;
+    }
+    // Remove relações sintoma -> doença
+    for (int i = 0; i < doenca->nSintomas; i++)
+    {
+        Sintoma *sintoma = getSintoma(tSintomas, doenca->sintomas[i]);
+        removerDoencaSintoma(sintoma, doenca->id);
+    }
+    // Remove Doença
+    removerDoenca(aDoencas, doenca->id);
+    // Persiste dados
+    printf("Salvando mudanças...\n");
+    persistirArvDoencas(aDoencas);
+    salvarTHSSintoma(tSintomas);
+    // Notificação
+    printf("Doenca %d removida! :)\n", id);
+    //  Libera memoria
+    liberarArvoreDoencas(aDoencas);
+    liberaTHSintomas(tSintomas);
     return 0;
 }
 void imprimeOperacoes()
