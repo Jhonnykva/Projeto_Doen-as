@@ -42,7 +42,7 @@ void imprimeDoenca(Doenca *doença)
 {
     if (doença != NULL)
     {
-        printf("%8d || %-50s \t|| ", doença->id, doença->nome);
+        printf("%8d || %-30s \t|| ", doença->id, doença->nome);
         for (int j = 0; j < doença->nSintomas; j++)
             printf("%s, ", doença->sintomas[j]);
         putchar('\n');
@@ -514,11 +514,17 @@ void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a)
     for (i = 0; i < a->nChaves; i++)
     {
         if (!a->folha)
+        {
             imprimeDoencas(r, getNo(a->filhos[i], r));
+            liberarNo(a->filhos[i], r);
+        }
         imprimeDoenca(a->chaves[i]);
     }
     if (!a->folha)
+    {
         imprimeDoencas(r, getNo(a->filhos[i], r));
+        liberarNo(a->filhos[i], r);
+    }
 }
 
 int isCheio(NoDoencas *a)

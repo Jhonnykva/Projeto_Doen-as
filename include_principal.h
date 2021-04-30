@@ -10,7 +10,10 @@
 #define MAX_BUFFER_SINTOMAS 2 * MAX_SINTOMAS *MAX_NOME
 
 #define AUTO_SALVAR 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 #endif
