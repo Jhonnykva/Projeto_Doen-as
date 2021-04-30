@@ -34,6 +34,14 @@ int main(int argc, char **argv)
             {
                 status = rmDoenca(argc, argv);
             }
+            else if (strcmp(argv[i + 1], "addSintoma") == 0) // Adicionar Sintoma
+            {
+                status = addSintoma(argc, argv);
+            }
+            else if (strcmp(argv[i + 1], "rmSintoma") == 0) // Remover Sintoma
+            {
+                status = rmSintoma(argc, argv);
+            }
             else
             {
                 printf("Operação NÃO definida :(\n");
@@ -282,7 +290,6 @@ int buscarDoencas(int argc, char **argv)
 
 int addDoenca(int argc, char **argv)
 {
-    printf("Buscar Doencas\n");
     // Obtem parametros
     int n = -1, nSintomas = 0;
     char nome[MAX_NOME] = "",
@@ -394,6 +401,125 @@ int rmDoenca(int argc, char **argv)
     liberaTHSintomas(tSintomas);
     return 0;
 }
+
+int addSintoma(int argc, char **argv)
+{
+    // Obtem parametros
+    int nDoencas = 0, doencas[MAX_DOENCAS];
+    char nomeSintoma[MAX_NOME] = "", sDoencas[MAX_BUFFER_DOENCAS] = "";
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+            if (strcmp(argv[i], "-nome") == 0 && i + 1 < argc)
+                strncat(nomeSintoma, argv[++i], MAX_NOME - 1);
+            else if (strcmp(argv[i], "-doencas") == 0 && i + 1 < argc)
+                strncat(sDoencas, argv[++i], MAX_BUFFER_DOENCAS - 1);
+    }
+    //Validacoes
+    if (strlen(nomeSintoma) <= 0)
+    {
+        printf("Nome de sintoma inválido. :(\n");
+        return 1;
+    }
+    // Separa id de doencas
+    char *aux = strtok(sDoencas, ",");
+    while (aux != NULL && nDoencas < MAX_DOENCAS)
+    {
+        int idTmp = -1;
+        if (aux != NULL)
+        {
+            sscanf(aux, "%d", &idTmp);
+            if (idTmp >= 0)
+                doencas[nDoencas++] = idTmp;
+        }
+        aux = strtok(NULL, ",");
+    }
+    // Carrega estruturas
+    printf("Carregando doenças & sintomas...\n");
+    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    THSintomas *tSintomas = carregaArqTHSintomas();
+    // Busca sintoma
+    Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
+    // Valida sintoma
+    if (sintoma != NULL)
+    {
+        printf("Sintoma \"%s\" já existe. :(\n", nomeSintoma);
+        return 1;
+    }
+    sintoma = criaSintoma(nomeSintoma);
+    // Cria relacoes
+    for (int i = 0; i < nDoencas; i++)
+    {
+        Doenca *doenca = getDoenca(doencas[i], aDoencas);
+        if (doenca != NULL)
+        {
+            adicionaSintoma(doenca, sintoma->nome);
+            adicionaDoencaSintoma(sintoma, doenca->id);
+        }
+    }
+    // Adiciona sintoma
+    inserirSintoma(tSintomas, sintoma);
+    // Persiste dados
+    printf("Persistindo dados...\n");
+    persistirArvDoencas(aDoencas);
+    salvarTHSSintoma(tSintomas);
+    // Notificação
+    printf("Sintoma \"%s\" adicionado! :)\n", nomeSintoma);
+    // Libera memoria
+    liberarArvoreDoencas(aDoencas);
+    liberaTHSintomas(tSintomas);
+    return 0;
+}
+
+int rmSintoma(int argc, char **argv)
+{
+    // Obtem parametros
+    char nomeSintoma[MAX_NOME] = "";
+    for (int i = 0; i < argc; i++)
+    {
+        if (argv[i][0] == '-')
+            if (strcmp(argv[i], "-nome") == 0 && i + 1 < argc)
+                strncat(nomeSintoma, argv[++i], MAX_NOME - 1);
+    }
+    //Validacoes
+    if (strlen(nomeSintoma) <= 0)
+    {
+        printf("Nome de sintoma inválido. :(\n");
+        return 1;
+    }
+    // Carrega estruturas
+    printf("Carregando doenças & sintomas...\n");
+    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    THSintomas *tSintomas = carregaArqTHSintomas();
+    // Busca sintoma
+    Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
+    // Valida sintoma
+    if (sintoma == NULL)
+    {
+        printf("Sintoma \"%s\" NĀO existe. :(\n", nomeSintoma);
+        return 1;
+    }
+    // Remove relações
+    for (int i = 0; i < sintoma->nDoencas; i++)
+    {
+        Doenca *doenca = getDoenca(sintoma->doencaAssociada[i], aDoencas);
+        if (doenca != NULL)
+            removeSintoma(doenca, sintoma->nome);
+    }
+    // Remove sintoma
+    removerSintoma(tSintomas, sintoma);
+    // Persiste dados
+    printf("Persistindo dados...\n");
+    persistirArvDoencas(aDoencas);
+    salvarTHSSintoma(tSintomas);
+    // Notificação
+    printf("Sintoma \"%s\" removido! :)\n", nomeSintoma);
+    // Libera memoria
+    liberarArvoreDoencas(aDoencas);
+    liberaTHSintomas(tSintomas);
+    return 0;
+}
+
 void imprimeOperacoes()
 {
     // printf("-----------------------------\n");

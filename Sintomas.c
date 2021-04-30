@@ -336,7 +336,7 @@ void carregarTHSintoma(THSintomas *H)
 
 int salvarTHSSintoma(THSintomas *h)
 {
-#if 1
+#if DEBUG
     printf("Persistindo THSintomas\n");
 #endif
     // Gera nome arquivo

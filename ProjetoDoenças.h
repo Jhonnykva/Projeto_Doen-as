@@ -20,6 +20,8 @@ int buscarDoenca(int argc, char **argv);
 int buscarDoencas(int argc, char **argv);
 int addDoenca(int argc, char **argv);
 int rmDoenca(int argc, char **argv);
+int addSintoma(int argc, char **argv);
+int rmSintoma(int argc, char **argv);
 void imprimeOperacoes();
 
 /**
