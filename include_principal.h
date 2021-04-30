@@ -1,6 +1,6 @@
 #ifndef MAIN_INCLUDES
 #define DEBUG 0
-
+#define INT_MAX 2147483646
 #define MAX_NOME 50
 #define MAX_ARQ_BUFFER 256
 

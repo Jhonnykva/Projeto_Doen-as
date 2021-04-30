@@ -1,7 +1,7 @@
 #include "include_principal.h"
 
 /*** 
- * Estrutura de Doenças 
+ * Estrutura de Doencas 
 ***/
 
 typedef struct doencas
@@ -20,7 +20,7 @@ void adicionaSintoma(Doenca *doenca, char *nomeSintoma);
 void removeSintoma(Doenca *doenca, char *nomeSintoma);
 
 /*** 
- * Árvore Doenças 
+ * Árvore Doencas 
 ***/
 
 #define T 1000

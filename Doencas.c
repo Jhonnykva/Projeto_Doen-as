@@ -1,7 +1,7 @@
-#include "Doenças.h"
+#include "Doencas.h"
 
 /*** 
- * Estrutura de Doenças 
+ * Estrutura de Doencas 
 ***/
 
 Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **sintomas)
@@ -38,13 +38,13 @@ void eliminaDoenca(Doenca *doenca)
     free(doenca);
 };
 
-void imprimeDoenca(Doenca *doença)
+void imprimeDoenca(Doenca *doenca)
 {
-    if (doença != NULL)
+    if (doenca != NULL)
     {
-        printf("%8d || %-30s \t|| ", doença->id, doença->nome);
-        for (int j = 0; j < doença->nSintomas; j++)
-            printf("%s, ", doença->sintomas[j]);
+        printf("%8d || %-30s \t|| ", doenca->id, doenca->nome);
+        for (int j = 0; j < doenca->nSintomas; j++)
+            printf("%s, ", doenca->sintomas[j]);
         putchar('\n');
     }
 }
@@ -90,7 +90,7 @@ void removeSintoma(Doenca *doenca, char *nomeSintoma)
 }
 
 /*** 
- * Árvore Doenças 
+ * Árvore Doencas 
 ***/
 
 ArvoreDoencas *criaArvoreDoencas()
@@ -161,7 +161,7 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
     }
     if (doenca == NULL)
     {
-        printf("ERROR: inserirDoenca: doença não pode ser NULL\n");
+        printf("ERROR: inserirDoenca: doenca não pode ser NULL\n");
         exit(1);
     }
     // Limpa cache de nos
@@ -626,7 +626,7 @@ void persistirArvDoencas(ArvoreDoencas *a)
     // Verifica estado final da operação
     if (!status)
     {
-        printf("ERROR:persistirArvDoencas: não foi possível persistir as doenças.");
+        printf("ERROR:persistirArvDoencas: não foi possível persistir as doencas.");
         exit(1);
     }
 }

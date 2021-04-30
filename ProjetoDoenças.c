@@ -87,8 +87,8 @@ int genDoencas(int argc, char **argv)
         printf("Número de doencas inválido. :(\n");
         exit(1);
     }
-    if (n >= INT32_MAX)
-        n = INT32_MAX / 2;
+    if (n >= INT_MAX)
+        n = INT_MAX / 2;
     // Cria estruturas de dados
     ArvoreDoencas *aDoencas = criaArvoreDoencas();
     THSintomas *tSintomas = criarTHSintomas(n + n / 5);

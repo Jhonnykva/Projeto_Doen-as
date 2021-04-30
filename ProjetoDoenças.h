@@ -1,5 +1,5 @@
 #include "include_principal.h"
-#include "Doenças.h"
+#include "Doencas.h"
 #include "Sintomas.h"
 
 /**
