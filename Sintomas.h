@@ -20,7 +20,7 @@ void liberaSintoma(Sintoma *sintoma);
  * **/
 
 #define SINTOMAS_ARQ "sintomas.ths"
-
+#define FLAG_SINT_RM "SRM"
 typedef struct tabelaHashSintoma
 {
     Sintoma **estrutura_sintoma;

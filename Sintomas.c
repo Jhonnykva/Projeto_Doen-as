@@ -65,15 +65,13 @@ void liberaSintoma(Sintoma *sintoma)
 /**
  * Tabela Hash de sintomas
  * **/
-//--------TABELA HASH - FUNÇÕES PRINCIPAIS
-int funcaoHashSintoma(char nome_sintoma[], int M)
+
+int funcaoHashSintoma(char nomeS[], int M)
 {
-    int i, s = 0;
-    for (i = 0; nome_sintoma[i] != '\0'; i++)
-    {
-        s += nome_sintoma[i];
-    }
-    return (s % M);
+    int i, h = nomeS[0];
+    for (i = 1; nomeS[i] != '\0'; i++)
+        h = (h * 256 + nomeS[i]) % M;
+    return h;
 }
 
 THSintomas *criarTHSintomas(int M)
@@ -90,50 +88,30 @@ THSintomas *criarTHSintomas(int M)
 
 void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 {
-    //esta função adiciona o sintoma a tabela hash e cria o
-    //arquivo que representa este sintoma
+    // Validacoes
     if (getSintoma(H, sintoma) != NULL)
     {
-        printf("Nao e possivel inserir sintoma, pois este sintoma ja existe\n");
+        printf("Nao e possível inserir sintoma, pois este sintoma ja existe\n");
         exit(1);
     }
     else if (isFull(H))
     {
-        printf("Nao e possivel inserir sintoma, pois a tabela esta cheia\n");
+        printf("Nao e possível inserir sintoma, pois a tabela esta cheia\n");
         exit(1);
     }
-
+    // Obtem local de inserção
     int localInsercao = funcaoHashSintoma(sintoma->nome, H->M);
-
+    // Aumenta nro de items
     H->N++;
-
-    //TRATAMENTO DE COLISÃO
-    while (H->estrutura_sintoma[localInsercao] != NULL /*||
-              strcmp(H->estrutura_sintoma[localInsercao]->nome, "Sintoma Removido")!=0*/
-    )
-    {
+    // Tratamento de colisão
+    while (H->estrutura_sintoma[localInsercao] != NULL &&
+           strcmp(H->estrutura_sintoma[localInsercao]->nome, FLAG_SINT_RM) != 0)
         localInsercao = (localInsercao + 1) % (H->M);
-    }
 
-    //ARMAZENAMENTO DO NOME DO SINTOMA NO ARQUIVO DE NOMES
-    // FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a");
-    // char fnomeSintoma[30] = "";
-    // strcat(fnomeSintoma, novoSintoma->nome);
-    // strcat(fnomeSintoma, ".txt");
-    // strcat(fnomeSintoma, "\0");
-    // fprintf(arquivoNomeSintoma, "%s\n", fnomeSintoma);
-    // fclose(arquivoNomeSintoma);
-
-    //CRIAÇÃO DO ARQUIVO ESPECÍFICO DO SINTOMA
-
-    // FILE *fSintoma = fopen(fnomeSintoma, "w");
-    // fprintf(fSintoma, "%s\n", novoSintoma->nome);
-    // fclose(fSintoma);
-
-    //ANEXANDO O SINTOMA À TABELA
+    // Adiciona sintoma à tabela
     H->estrutura_sintoma[localInsercao] = sintoma;
 #if DEBUG
-    printf("Sintoma %s inserido\n", nomeSintoma);
+    printf("Sintoma %s inserido\n", sintoma->nome);
 #endif
 }
 
@@ -151,7 +129,7 @@ void removerSintoma(THSintomas *H, char nomeSintoma[])
 
     //REMOVENDO O SINTOMA DA TABELA
     liberaSintoma(H->estrutura_sintoma[fH]);
-    H->estrutura_sintoma[fH] = criaSintoma("Sintoma Removido");
+    H->estrutura_sintoma[fH] = criaSintoma(FLAG_SINT_RM);
     H->N--;
 #if DEBUG
     printf("Sintoma %s removido\n", nomeSintoma);
@@ -265,7 +243,6 @@ void liberaTHSintomas(THSintomas *H)
     free(H);
 }
 
-//--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int verificaSintomaExistente(char sintoma[], THSintomas *H)
 {
     //verifica se um dado sintoma já existe verificando o seu nome
@@ -312,7 +289,7 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
         // Percorre tabela até encontrar o sintoma
         while (i < H->M && H->estrutura_sintoma[fH + i] != NULL)
         {
-            if (strcmp(nomeSintoma, H->estrutura_sintoma[fH]->nome) == 0)
+            if (strcmp(nomeSintoma, H->estrutura_sintoma[fH + i]->nome) == 0)
                 return H->estrutura_sintoma[fH + i]; // Retorna ponteiro do sintoma
             i++;
         }
@@ -320,7 +297,7 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
     return NULL;
 }
 
-//-------ARQUIVOS---------
+// Carga/Persistencia THSintomas
 
 void carregarTHSintoma(THSintomas *H)
 {
@@ -359,6 +336,9 @@ void carregarTHSintoma(THSintomas *H)
 
 int salvarTHSSintoma(THSintomas *h)
 {
+#if 1
+    printf("Persistindo THSintomas\n");
+#endif
     // Gera nome arquivo
     char fName[MAX_ARQ_BUFFER] = "";
     strcat(fName, DATA_HOME);
@@ -384,9 +364,7 @@ int salvarTHSSintoma(THSintomas *h)
             fprintf(arq, "%s\n", sintoma->nome);
             fprintf(arq, "%d %d\n", i, sintoma->nDoencas);
             for (int j = 0; j < sintoma->nDoencas; j++)
-            {
                 fprintf(arq, "%d\n", sintoma->doencaAssociada[j]);
-            }
         }
     }
     return fclose(arq) == 0;
