@@ -51,3 +51,44 @@ clean:
 cleanExec:
 	rm -f $(EXEC)
 
+#================
+#A regra execClean: apaga os dados gerados	
+cleanData:
+	rm -f ./data/*.no
+	rm -f ./data/*.btree
+	rm -f ./data/*.ths
+
+#================
+# TESTES
+#================
+
+# TESTE-01: Gera doenças para testar as funçoes
+teste1: $(EXEC)
+	./ProjetoDoencas -o genDoencas -n 100000
+
+# TESTE-02: Cria manualmente uma doença
+teste2: $(EXEC)
+	./ProjetoDoencas -o addDoenca -nome "Doenca de Teste ;)" -sintomas "Sintoma A,Sintoma 1, Sintoma 2,Sintoma de Teste"
+
+# TESTE-03: Remove manualmente uma doença
+teste3: $(EXEC)
+	./ProjetoDoencas -o rmDoenca -id 1234
+
+# TESTE-04: Cria manualmente um sintoma
+teste4: $(EXEC)
+	./ProjetoDoencas -o addSintoma -nome "Sintoma de Teste 2" -doencas "1,54,12,14,60,100"
+
+# TESTE-05: Remove manualmente um sintoma
+teste5: $(EXEC)
+	./ProjetoDoencas -o rmSintoma -nome "Sintoma 1234"
+
+# TESTE-06: Busca doenca por id
+teste6: $(EXEC)
+	./ProjetoDoencas -o buscarDoenca -id 12345
+
+# TESTE-07: Busca doenca por id
+teste7: $(EXEC)
+	./ProjetoDoencas -o buscarDoencas -sintomas "Sintoma 1,Sintoma Invalido,Sintoma 123,Sintoma 321,Sintoma 34212"
+
+# Executa todos os testes
+testes: $(EXEC) teste1 teste2 teste3 teste4 teste5 teste6 teste7
