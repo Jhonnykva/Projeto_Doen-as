@@ -31,10 +31,10 @@ typedef struct tabelaHashSintoma
 
 //--------TABELA HASH - FUNÇÕES PRINCIPAIS
 THSintomas *criarTHSintomas(int M);
-int funcaoHashSintoma(char nome_sintoma[], int M);
+int funcaoHashSintoma(char *nome_sintoma, int M);
 void inserirSintoma(THSintomas *H, Sintoma *sintoma);
-void removerSintoma(THSintomas *H, char nomeSintoma[]);
-void buscarSintoma(THSintomas *H, char nomeSintoma[]);
+void removerSintoma(THSintomas *H, char *nomeSintoma);
+void buscarSintoma(THSintomas *H, char *nomeSintoma);
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
 void liberaTHSintomas(THSintomas *H);
 
@@ -44,13 +44,6 @@ int verificaSintomaExistente(char sintoma[], THSintomas *H);
 void imprimirTHCompleta(THSintomas *H);
 
 //--------FUNÇÕES DE ARQUIVOS
-/*//Não usadas mais, mas ainda não retirei por precaução, caso necessite delas denovo
-char *gerarNomeSintoma(const char nomeSintoma[]);
-int *vetor_linhas(FILE* arquivo);
-void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int *v);*/
-void carregarTHSintoma(THSintomas *H);
+
 int salvarTHSSintoma(THSintomas *h);
 THSintomas *carregaArqTHSintomas();
-
-//--------OUTAS FUNÇÕES
-void relacionarDoencaSintoma();

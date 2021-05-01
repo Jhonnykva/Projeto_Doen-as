@@ -1,14 +1,19 @@
-#include "ProjetoDoenças.h"
+#include "ProjetoDoencas.h"
 
 int main(int argc, char **argv)
 {
+#if defined(_WIN32)
+    _mkdir(DATA_HOME);
+#else
+    mkdir(DATA_HOME, 0777);
+#endif
     int status = -2;
     for (int i = 0; status == -2 && i < argc; i++)
     {
         if (argv[i][0] == '-' && argv[i][1] == 'o' && i + 1 < argc)
         {
 
-            // printf("%s %d\n", argv[i + 1]), strcmp(argv[i + 1], "lstDoencas");
+            // printf("%s %d/%d\n", argv[i], i, argc);
 
             if (strcmp(argv[i + 1], "lstDoencas") == 0) // Listar doencas
             {
@@ -49,7 +54,7 @@ int main(int argc, char **argv)
             }
         }
     }
-
+    putchar('\n');
     return status;
 }
 
@@ -69,7 +74,6 @@ int lstDoencas(int argc, char **argv)
 
 int genDoencas(int argc, char **argv)
 {
-    printf("Gerar Doencas\n");
     srand(time(NULL));
     // Obtem parametros
     int n = -1, print = 0;
@@ -130,10 +134,11 @@ int genDoencas(int argc, char **argv)
         adicionaDoencaSintoma(sintomas[i], doencas[i]->id);
         for (int j = 1; j < nSintD; j++)
         {
-            adicionaSintoma(doencas[i], sintomas[(i + j * nSintD) % nSintomas]);
+            adicionaSintoma(doencas[i], sintomas[(i + j * nSintD) % nSintomas]->nome);
             adicionaDoencaSintoma(sintomas[(i + j * nSintD) % nSintomas], doencas[i]->id);
         }
     }
+    printf("Baralhando doenças...\n");
     // Desorganiza vetor
     for (i = 0; i < nDoencas; i++)
     {
@@ -143,10 +148,12 @@ int genDoencas(int argc, char **argv)
         doencas[j] = tmp;
     }
     // Insere doencas na arvore
+    printf("Inserindo doenças...\n");
     for (i = 0; i < nDoencas; i++)
         inserirDoenca(doencas[i], aDoencas);
 
     // Persiste Arvore de doencas e Tabela de sintomas
+    printf("Persistindo dados...\n");
     persistirArvDoencas(aDoencas);
     salvarTHSSintoma(tSintomas);
     // Imprime doencas geradas
@@ -198,19 +205,21 @@ int buscarDoencas(int argc, char **argv)
     printf("Buscar Doencas\n");
     // Obtem parametros
     int nSintomas = 0;                                                    // Nro. de sintomas
-    char bSintomas[MAX_BUFFER_SINTOMAS] = "",                             // Buffer de string de sintomas
+    char bSintomas[MAX_BUFFER_SINTOMAS + 1] = "",                         // Buffer de string de sintomas
         *aux = NULL;                                                      // Ponteiro auxiliar
     char **nomeSintomas = (char **)malloc(MAX_SINTOMAS * sizeof(char *)); // Vetor de sintomas
     for (int i = 0; i < argc; i++)
     {
         if (argv[i][0] == '-')
+        {
             if (strcmp(argv[i], "-sintomas") == 0 && i + 1 < argc)
-                strncat(bSintomas, argv[++i], MAX_BUFFER_SINTOMAS - 1);
+                strncat(bSintomas, argv[++i], MAX_NOME - 1);
+        }
     }
 
     // Separa nome de sintomas
     aux = strtok(bSintomas, ",");
-    while (aux != NULL && nSintomas < MAX_SINTOMAS)
+    while (aux != NULL && nSintomas < MAX_SINTOMAS - 1)
     {
         if (aux != NULL)
             nomeSintomas[nSintomas++] = aux;
@@ -223,7 +232,6 @@ int buscarDoencas(int argc, char **argv)
         printf("Sem sintomas válidos. :(\n");
         return 1;
     }
-
     // Carrega estruturas
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
@@ -232,9 +240,10 @@ int buscarDoencas(int argc, char **argv)
     int nSintVal = 0;
     for (int i = 0; i < nSintomas; i++)
     {
-        sintomas[i] = getSintoma(tSintomas, nomeSintomas[i]);
-        if (sintomas[i] != NULL)
-            nSintVal++;
+        Sintoma *sintoma = getSintoma(tSintomas, nomeSintomas[i]);
+
+        if (sintoma != NULL)
+            sintomas[nSintVal++] = sintoma;
     }
 
     int maxDoencas = MAX_SINTOMAS * nSintVal, nDoencas = 0;
@@ -379,7 +388,7 @@ int rmDoenca(int argc, char **argv)
     Doenca *doenca = getDoenca(id, aDoencas);
     if (doenca == NULL)
     {
-        printf("Doença %d não encontrada. :(\n");
+        printf("Doença %d não encontrada. :(\n", id);
         return 1;
     }
     // Remove relações sintoma -> doença
@@ -410,10 +419,12 @@ int addSintoma(int argc, char **argv)
     for (int i = 0; i < argc; i++)
     {
         if (argv[i][0] == '-')
+        {
             if (strcmp(argv[i], "-nome") == 0 && i + 1 < argc)
                 strncat(nomeSintoma, argv[++i], MAX_NOME - 1);
             else if (strcmp(argv[i], "-doencas") == 0 && i + 1 < argc)
                 strncat(sDoencas, argv[++i], MAX_BUFFER_DOENCAS - 1);
+        }
     }
     //Validacoes
     if (strlen(nomeSintoma) <= 0)
@@ -507,7 +518,7 @@ int rmSintoma(int argc, char **argv)
             removeSintoma(doenca, sintoma->nome);
     }
     // Remove sintoma
-    removerSintoma(tSintomas, sintoma);
+    removerSintoma(tSintomas, sintoma->nome);
     // Persiste dados
     printf("Persistindo dados...\n");
     persistirArvDoencas(aDoencas);

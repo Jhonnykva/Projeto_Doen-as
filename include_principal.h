@@ -1,7 +1,7 @@
 #ifndef MAIN_INCLUDES
 #define DEBUG 0
 #define INT_MAX 2147483646
-#define MAX_NOME 50
+#define MAX_NOME 75
 #define MAX_ARQ_BUFFER 256
 
 #define DATA_HOME "./data/"
@@ -17,5 +17,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#if defined(_WIN32)
+#include <windows.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
 
 #endif

@@ -47,10 +47,7 @@ void removerDoencaSintoma(Sintoma *sintoma, int idDoenca)
         sintoma->doencaAssociada[pos] = -1;
         sintoma->nDoencas -= 1;
         for (int i = pos; i < sintoma->nDoencas; i++)
-        {
-            printf("%d %d %d\n", pos, i, sintoma->nDoencas);
             sintoma->doencaAssociada[i] = sintoma->doencaAssociada[i + 1];
-        }
         sintoma->doencaAssociada = (int *)realloc(sintoma->doencaAssociada, sintoma->nDoencas * sizeof(int));
     }
 }
@@ -89,7 +86,7 @@ THSintomas *criarTHSintomas(int M)
 void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 {
     // Validacoes
-    if (getSintoma(H, sintoma) != NULL)
+    if (getSintoma(H, sintoma->nome) != NULL)
     {
         printf("Nao e possível inserir sintoma, pois este sintoma ja existe\n");
         exit(1);
@@ -115,7 +112,7 @@ void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 #endif
 }
 
-void removerSintoma(THSintomas *H, char nomeSintoma[])
+void removerSintoma(THSintomas *H, char *nomeSintoma)
 {
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
     // Verifica se o sintoma existe
@@ -190,7 +187,7 @@ void removerSintoma(THSintomas *H, char nomeSintoma[])
     // remove(fnSintoma);
 }
 
-void buscarSintoma(THSintomas *H, char nomeSintoma[])
+void buscarSintoma(THSintomas *H, char *nomeSintoma)
 {
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
     int encontrado = 0;
@@ -243,7 +240,7 @@ void liberaTHSintomas(THSintomas *H)
     free(H);
 }
 
-int verificaSintomaExistente(char sintoma[], THSintomas *H)
+int verificaSintomaExistente(char *sintoma, THSintomas *H)
 {
     //verifica se um dado sintoma já existe verificando o seu nome
     if ((H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)] != NULL) && (strcpy(sintoma, H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)]->nome) == 0))
@@ -298,42 +295,6 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
 }
 
 // Carga/Persistencia THSintomas
-
-void carregarTHSintoma(THSintomas *H)
-{
-
-    FILE *fNomeSintoma = fopen("ArquivoNomeSintoma.txt", "r+");
-    char aux[50] = "", dadosArquivo[500] = "", aux2[50];
-    int i = 0, j = 0;
-    while (fgets(aux, 50, fNomeSintoma) != NULL)
-    {
-        strcat(dadosArquivo, aux);
-    }
-    while (dadosArquivo[i] != NULL)
-    {
-        while (dadosArquivo[i] != '.')
-        {
-            aux2[j] = dadosArquivo[i];
-            i++;
-            j++;
-        }
-        while (dadosArquivo[i] != '\n')
-        {
-            i++;
-        }
-        aux2[j] = '\0';
-        inserirSintoma(H, aux2);
-        j = 0;
-        while (aux2[j] != NULL)
-        {
-            aux2[j] = NULL;
-            j++;
-        }
-        j = 0;
-        i++;
-    }
-}
-
 int salvarTHSSintoma(THSintomas *h)
 {
 #if DEBUG
