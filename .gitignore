@@ -55,6 +55,6 @@ dkms.conf
 .DS_Store
 .vscode
 ProjetoDoencas
-.no
-.btree
-.ths
+*.no
+*.btree
+*.ths

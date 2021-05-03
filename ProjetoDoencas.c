@@ -2,19 +2,18 @@
 
 int main(int argc, char **argv)
 {
+// Verifica que a pasta de dados sempre  exista
 #if defined(_WIN32)
     _mkdir(DATA_HOME);
 #else
     mkdir(DATA_HOME, 0777);
 #endif
+
     int status = -2;
     for (int i = 0; status == -2 && i < argc; i++)
     {
         if (argv[i][0] == '-' && argv[i][1] == 'o' && i + 1 < argc)
         {
-
-            // printf("%s %d/%d\n", argv[i], i, argc);
-
             if (strcmp(argv[i + 1], "lstDoencas") == 0) // Listar doencas
             {
                 status = lstDoencas(argc, argv);
@@ -52,6 +51,11 @@ int main(int argc, char **argv)
                 printf("Operação NÃO definida :(\n");
                 imprimeOperacoes();
             }
+        }
+        else if (argv[i][0] == '-' && argv[i][1] == 'h')
+        {
+            imprimeOperacoes();
+            break;
         }
     }
     putchar('\n');
@@ -335,7 +339,7 @@ int addDoenca(int argc, char **argv)
     }
     // Carrega estruturas
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
-    THSintomas *tSintomas = carregaArqTHSintomas();
+    THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Cria doenca
     Doenca *doenca = criaDoenca(aDoencas->nDoencas, nome, 0, NULL);
     // Relaciona doenca com seus sintomas
@@ -383,7 +387,7 @@ int rmDoenca(int argc, char **argv)
     // Carrega estruturas
     printf("Carregando doenças...\n");
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
-    THSintomas *tSintomas = carregaArqTHSintomas();
+    THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca doenca
     Doenca *doenca = getDoenca(id, aDoencas);
     if (doenca == NULL)
@@ -448,7 +452,7 @@ int addSintoma(int argc, char **argv)
     // Carrega estruturas
     printf("Carregando doenças & sintomas...\n");
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
-    THSintomas *tSintomas = carregaArqTHSintomas();
+    THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca sintoma
     Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
     // Valida sintoma
@@ -501,7 +505,7 @@ int rmSintoma(int argc, char **argv)
     // Carrega estruturas
     printf("Carregando doenças & sintomas...\n");
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
-    THSintomas *tSintomas = carregaArqTHSintomas();
+    THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca sintoma
     Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
     // Valida sintoma
@@ -533,72 +537,22 @@ int rmSintoma(int argc, char **argv)
 
 void imprimeOperacoes()
 {
-    // printf("-----------------------------\n");
-    // printf("ARGUMENTOS VÁLIDOS:\n");
-    // printf("-----------------------------\n");
-    // printf("op\t\tdesc\t[valores válidos]\n");
-    // printf("-----------------------------\n");
-    // printf("-o\t\tDefine a operação a executar\t[lstDoencas genDoencas buscarDoenca]\n");
-    // TESTES
-    THSintomas *sintomas = criarTHSintomas(100);
-    inserirSintoma(sintomas, criaSintoma("Sintoma A"));
-    inserirSintoma(sintomas, criaSintoma("Sintoma B"));
-    inserirSintoma(sintomas, criaSintoma("Sintoma C"));
-    inserirSintoma(sintomas, criaSintoma("Sintoma D"));
-
-    Sintoma *a = getSintoma(sintomas, "Sintoma A");
-    adicionaDoencaSintoma(a, 40);
-    adicionaDoencaSintoma(a, 41);
-    adicionaDoencaSintoma(a, 42);
-    adicionaDoencaSintoma(a, 43);
-    adicionaDoencaSintoma(a, 44);
-    removerDoencaSintoma(a, 41);
-
-    Sintoma *b = getSintoma(sintomas, "Sintoma B");
-    adicionaDoencaSintoma(b, 40);
-    adicionaDoencaSintoma(b, 41);
-    adicionaDoencaSintoma(b, 42);
-    removerDoencaSintoma(b, 29);
-    removerDoencaSintoma(b, 1);
-    adicionaDoencaSintoma(b, 42);
-
-    salvarTHSSintoma(sintomas);
-
-    THSintomas *sintomas2 = carregaArqTHSintomas(100);
-    imprimirTHCompleta(sintomas);
-    imprimirTHCompleta(sintomas2);
-    liberaTHSintomas(sintomas);
-    liberaTHSintomas(sintomas2);
-
-    // ArvoreDoencas *a = criaArvoreDoencas();
-    // Doenca *doenca = NULL;
-    // // Loop para teste
-    // unsigned int ids[] = {10, 43, 1, 4, 7, 6, 2, 56, 12, 45, 65, 3, 14, 13, 11, 98, 79};
-    // int max_ids = 17;
-    // for (int i = 0; i < max_ids; i++)
-    // {
-    //     char **sintomas = (char **)malloc(3 * sizeof(char *));
-    //     sintomas[0] = (char *)malloc(MAX_NOME * sizeof(char));
-    //     strcpy(sintomas[0], "Sintoma A\0");
-    //     sintomas[1] = (char *)malloc(MAX_NOME * sizeof(char));
-    //     strcpy(sintomas[1], "Sintoma B\0");
-    //     sintomas[2] = (char *)malloc(MAX_NOME * sizeof(char));
-    //     strcpy(sintomas[2], "Sintoma C\0");
-    //     doenca = criaDoenca(ids[i], "Doenca A A", 3, sintomas);
-    //     inserirDoenca(doenca, a);
-    //     printf("\n====== %d inserido ======\n", ids[i]);
-    //     putchar('\n');
-    // }
-
-    // ArvoreDoencas *a = carregaArvDoencas();
-    // imprimeDoencas(a, getNo(a->raiz, a));
-    // Doenca *d = getDoenca(43, a);
-    // strcpy(d->nome, "Super Doença");
-    // adicionaSintoma(d, "Sintoma M");
-    // removeSintoma(d, "Sintoma B");
-    // persistirArvDoencas(a);
-    // imprimeDoencas(a, getNo(a->raiz, a));
-    // liberarArvoreDoencas(a);
+    printf("OPERAÇŌES VÁLIDAS:\n");
+    putchar('\n');
+    printf("-> Inserção de uma doença\n");
+    printf("\t -o addDoenca -nome <Nome da doença> -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
+    printf("-> Remoção de uma doença\n");
+    printf("\t -o rmDoenca -id <ID da doença>\n");
+    printf("-> Inserção de um sintoma\n");
+    printf("\t -o addDoenca -nome \"<Nome da doença>\" -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
+    printf("-> Remoção de um sintoma\n");
+    printf("\t -o rmDoenca -nome \"<Nome do sintoma>\"\n");
+    printf("-> Busca de doença por ID\n");
+    printf("\t -o buscarDoenca -id <ID da doença>\n");
+    printf("-> Busca de doencas por sintomas\n");
+    printf("\t -o buscarDoencas -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
+    printf("-> Geração de doenças\n");
+    printf("\t -o genDoencas -n <Nro. de doenças a serem geradas>\n");
 }
 
 /**
