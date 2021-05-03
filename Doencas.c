@@ -29,6 +29,7 @@ Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **s
 
 void eliminaDoenca(Doenca *doenca)
 {
+    //Esta função elimima uma doença do banco de dados, juntamento com suas associações
     if (doenca == NULL)
         return;
     // Libera vetor de sintomas
@@ -40,6 +41,7 @@ void eliminaDoenca(Doenca *doenca)
 
 void imprimeDoenca(Doenca *doenca)
 {
+    //Imprime uma determinada doença juntamente com suas associações/informações pertinentes
     if (doenca != NULL)
     {
         printf("%8d || %-30s \t|| ", doenca->id, doenca->nome);
@@ -51,6 +53,8 @@ void imprimeDoenca(Doenca *doenca)
 
 void adicionaSintoma(Doenca *doenca, char *nomeSintoma)
 {
+    // Esta função adiciona algum sintoma na lista de sintomas de alguma determinada doença
+
     // Verifica que o ponteiro seja valido
     if (doenca == NULL)
         return;
@@ -66,6 +70,8 @@ void adicionaSintoma(Doenca *doenca, char *nomeSintoma)
 
 void removeSintoma(Doenca *doenca, char *nomeSintoma)
 {
+    // Esta função remoe algum sintoma na lista de sintomas de alguma determinada doença
+
     // Verifica que o ponteiro seja valido
     if (doenca == NULL)
         return;
@@ -95,6 +101,7 @@ void removeSintoma(Doenca *doenca, char *nomeSintoma)
 
 ArvoreDoencas *criaArvoreDoencas()
 {
+    // Cria e retorna uma árvore de doenças
     ArvoreDoencas *a = (ArvoreDoencas *)malloc(sizeof(ArvoreDoencas));
     a->nDoencas = 0;
     a->raiz = NO_DOENCA_VAZIO;
@@ -107,6 +114,8 @@ ArvoreDoencas *criaArvoreDoencas()
 
 NoDoencas *criaNoArvoreDoencas(ArvoreDoencas *r, int folha)
 {
+    // Esta função cria um novo nó na árvore de doenças
+
     NoDoencas *no = (NoDoencas *)malloc(sizeof(NoDoencas));
     no->id = r != NULL ? r->maxNoId++ : -1;
     no->folha = folha;
