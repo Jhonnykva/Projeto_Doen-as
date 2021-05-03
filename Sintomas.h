@@ -7,8 +7,8 @@
 typedef struct sintomas
 {
     char nome[MAX_NOME];  // Nome do sintoma
-    int nDoencas;         // Nro. doencas associadas
-    int *doencaAssociada; // Doencas associadas
+    int nDoencas;         // Número de doenças associadas
+    int *doencaAssociada; // Doenças associadas
 } Sintoma;
 
 Sintoma *criaSintoma(char *nomeSintoma);
@@ -34,7 +34,6 @@ THSintomas *criarTHSintomas(int M);
 int funcaoHashSintoma(char *nome_sintoma, int M);
 void inserirSintoma(THSintomas *H, Sintoma *sintoma);
 void removerSintoma(THSintomas *H, char *nomeSintoma);
-void buscarSintoma(THSintomas *H, char *nomeSintoma);
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
 void liberaTHSintomas(THSintomas *H);
 
@@ -45,5 +44,5 @@ void imprimirTHCompleta(THSintomas *H);
 
 //--------FUNÇÕES DE ARQUIVOS
 
-int salvarTHSSintoma(THSintomas *h);
+int salvarTHSSintoma(THSintomas *H);
 THSintomas *carregaArqTHSintomas();

@@ -73,6 +73,7 @@ int funcaoHashSintoma(char nomeS[], int M)
 
 THSintomas *criarTHSintomas(int M)
 {
+    //Cria a tabela hash e retorna-a
     THSintomas *novaTabela = (THSintomas *)malloc(sizeof(THSintomas));
     novaTabela->M = M;
     novaTabela->N = 0;
@@ -98,7 +99,7 @@ void inserirSintoma(THSintomas *H, Sintoma *sintoma)
     }
     // Obtem local de inserção
     int localInsercao = funcaoHashSintoma(sintoma->nome, H->M);
-    // Aumenta nro de items
+    // Aumenta número de itens
     H->N++;
     // Tratamento de colisão
     while (H->estrutura_sintoma[localInsercao] != NULL &&
@@ -121,8 +122,6 @@ void removerSintoma(THSintomas *H, char *nomeSintoma)
         printf("\nSintoma nao removido porque não existe.\n");
         return;
     }
-    //remove(gerarNomeSintoma(nomeSintoma));
-    //remove está comentado pois só funciona em linux
 
     //REMOVENDO O SINTOMA DA TABELA
     liberaSintoma(H->estrutura_sintoma[fH]);
@@ -131,101 +130,8 @@ void removerSintoma(THSintomas *H, char *nomeSintoma)
 #if DEBUG
     printf("Sintoma %s removido\n", nomeSintoma);
 #endif
-    //REMOVENDO SINTOMA DO ARQUIVO DE NOMES DE SINTOMAS
-    //AJUSTAR DEPOIS
-    // FILE *arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "a+");
-    // char aux[100] = "", dadosArquivo[500] = "", fnSintoma[30] = "";
-    // int i = 0, j = 0, posicao1 = 0, posicao2, contAux = 0;
-
-    // strcat(fnSintoma, nomeSintoma);
-    // strcat(fnSintoma, ".txt");
-    // strcat(fnSintoma, "\0");
-    /*
-        if(arquivoNomeSintoma==NULL){
-            printf("ArquivoNomeSintoma.txt não foi aberto");
-        }
-
-        while(fgets(aux, 100, arquivoNomeSintoma)!=NULL){
-            strcat(dadosArquivo, aux);
-        }*/
-    /*while(fnSintoma[contAux]!='\0'){
-            contAux++;
-        }
-        for(i=0; dadosArquivo[i]!=NULL; i++){
-
-            if(dadosArquivo[i] == fnSintoma[j]){
-                posicao1=i;
-                while(dadosArquivo[i] == fnSintoma[j]){
-                    i++;
-                    j++;
-                    if(j==contAux){
-                        posicao2=i;
-                    }
-                }
-            }
-            if(posicao2!=0){
-                break;
-            }
-            else{
-                i=posicao1;
-            }
-        }
-        while(dadosArquivo[posicao2+1]!=NULL){
-            dadosArquivo[posicao1]=dadosArquivo[posicao2+1];
-            posicao1++;
-            posicao2++;
-        }
-        dadosArquivo[posicao2+1]='\0';*/
-    //printf("\n%s", dadosArquivo);
-
-    // fclose(arquivoNomeSintoma);
-    //arquivoNomeSintoma = fopen("ArquivoNomeSintoma.txt", "w");
-    //fputs(dadosArquivo, arquivoNomeSintoma);
-
-    //REMOVENDO DELETANDO ARQUIVO ESPECÍFICO DO SINTOMA
-
-    // remove(fnSintoma);
 }
 
-void buscarSintoma(THSintomas *H, char *nomeSintoma)
-{
-    int fH = funcaoHashSintoma(nomeSintoma, H->M);
-    int encontrado = 0;
-    if (H->estrutura_sintoma[fH] == NULL)
-    {
-        printf("\nSintoma %s nao existente", nomeSintoma);
-    }
-    else
-    {
-        while (H->estrutura_sintoma[fH] != NULL || strcmp(nomeSintoma, H->estrutura_sintoma[fH]->nome) != 0)
-        {
-            if (strcmp(nomeSintoma, H->estrutura_sintoma[fH]->nome) == 0)
-            {
-                encontrado = 1;
-                break;
-            }
-            else
-            {
-                fH++;
-            }
-        }
-    }
-    if (encontrado == 1)
-    {
-        //ABRINDO ARQUIVO
-        /*FILE *arquivoSintoma = fopen(gerarNomeSintoma(nomeSintoma), "r");
-        if(arquivoSintoma!= NULL)
-            printf("\narquivo de %s aberto", nomeSintoma);
-        int *vetorNLinhas = vetor_linhas(arquivoSintoma);*/
-
-        //MOSTRANDO DADOS DO SINTOMA
-        printf("\n\nnome: %s", H->estrutura_sintoma[fH]->nome);
-        printf("\nDoencas associadas: ");
-        //imprimirDadosArquivoSintoma(1, sizeof(vetorNLinhas)/4, arquivoSintoma, vetorNLinhas);
-        //printf("\n");
-        //fclose(arquivoSintoma);
-    }
-}
 
 void liberaTHSintomas(THSintomas *H)
 {
@@ -242,21 +148,22 @@ void liberaTHSintomas(THSintomas *H)
 
 int verificaSintomaExistente(char *sintoma, THSintomas *H)
 {
-    //verifica se um dado sintoma já existe verificando o seu nome
+    // Verifica se sintoma existe
     if ((H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)] != NULL) && (strcpy(sintoma, H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)]->nome) == 0))
         return 1;
-    //trocar o valor do strcpm assim que possuir acesso ao nome
     else
         return 0;
 }
 
 int isFull(THSintomas *H)
 {
+    // Verifica se a tabela está cheia
     return H->N >= H->M;
 }
 
 void imprimirTHCompleta(THSintomas *H)
 {
+    //Esta função imprime a tabela hash completa
     printf("\n\nTabela Completa: \n");
     for (int i = 0; i < H->M; i++)
     {
@@ -295,7 +202,7 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
 }
 
 // Carga/Persistencia THSintomas
-int salvarTHSSintoma(THSintomas *h)
+int salvarTHSSintoma(THSintomas *H)
 {
 #if DEBUG
     printf("Persistindo THSintomas\n");
@@ -315,11 +222,11 @@ int salvarTHSSintoma(THSintomas *h)
         exit(1);
     }
     // Salva informacoes base da tabela hash
-    fprintf(arq, "%d %d\n", h->N, h->M);
+    fprintf(arq, "%d %d\n", H->N, H->M);
     // Chaves
-    for (int i = 0; i < h->M; i++)
+    for (int i = 0; i < H->M; i++)
     {
-        Sintoma *sintoma = h->estrutura_sintoma[i];
+        Sintoma *sintoma = H->estrutura_sintoma[i];
         if (sintoma != NULL)
         {
             fprintf(arq, "%s\n", sintoma->nome);
@@ -379,42 +286,3 @@ THSintomas *carregaArqTHSintomas(int _M)
     return sintomas;
 }
 
-/*char *gerarNomeSintoma(const char nomeSintoma[]){
-    //adiciona ".txt" à string do nome do sintoma para fazer um arquivo
-    char nome[30] = "";
-    strcat(nome, nomeSintoma);
-    strcat(nome, ".txt");
-    return nome;
-}*/
-/*
-void imprimirDadosArquivoSintoma(int linhaInicial, int linhaFinal, FILE *arquivo, int* v){
-    //esta função imprime os dados do começo de uma linha até o final de outra linha
-    char c[1000];
-
-    if(linhaFinal<linhaInicial){
-        printf("ERROR: valor de linhas invalidos.\n");
-    }
-    fscanf(arquivo, "%s", c);
-    printf("\n");
-    for(int i=v[linhaInicial];i<(v[linhaFinal+1]-1);i++){
-        printf("%c", c[i]);
-    }
-}*/
-/*
-int *vetor_linhas(FILE* arquivo){
-    //esta função gera um vetor cujo o índice representa a linha e o
-    //valor do índice representa em qual caracter a linha se inicia.
-    int *vetor=(int*)malloc(sizeof(int));
-    int i=0, j=1;
-    char dados[1000];
-    fscanf(arquivo, "%s", dados);
-    vetor[0]=0;
-    while(dados[i]!=NULL){
-        if(dados[i]=='\n'){
-            vetor[j]=i;
-            j++;
-        }
-        i++;
-    }
-    return i;
-}*/
