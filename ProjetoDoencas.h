@@ -23,7 +23,7 @@
 typedef struct busca_doencas
 {
   Doenca *doenca; // Ponteiro doença
-  int n;          // Nro. de coincidencias
+  int n;          // Nro. de coincidências
 } BuscaDoencas;
 
 /**

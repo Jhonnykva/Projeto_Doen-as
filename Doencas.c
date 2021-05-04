@@ -6,7 +6,7 @@
 
 /** 
  * Essa função é encarregada de alocar e popular uma nova doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - int id: identificador da doença.
  *      - char* nome: nome da doença.
  *      - int nSintomas: nro. de sintomas da doença.
@@ -38,7 +38,7 @@ Doenca *criaDoenca(int id, char *nome, int nSintomas, char **sintomas)
 
 /** 
  * Essa função é encarregada de desalocar a memoria ocupada por uma doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - Doenca* doença: ponteiro da doença a ser desalocada.
  * */
 void liberaDoenca(Doenca *doenca)
@@ -55,7 +55,7 @@ void liberaDoenca(Doenca *doenca)
 
 /** 
  * Essa função é encarregada de imprimir na consola as informações da doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - Doenca* doença: ponteiro da doença.
  *  */
 void imprimeDoenca(Doenca *doenca)
@@ -72,7 +72,7 @@ void imprimeDoenca(Doenca *doenca)
 
 /** 
  * Essa função é encarregada de adicionar um novo sintoma a uma doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - Doenca* doença: ponteiro da doença.
  *      - char* nomeSintoma: nome de sintoma a ser relacionado.
  * */
@@ -80,7 +80,7 @@ void adicionaSintoma(Doenca *doenca, char *nomeSintoma)
 {
     // Esta função adiciona algum sintoma na lista de sintomas de alguma determinada doença
 
-    // Verifica que o ponteiro seja valido
+    // Verifica que o ponteiro seja válido
     if (doenca == NULL)
         return;
     if (doenca->nSintomas == 0) // CASO: não tenha nenhum sintoma
@@ -95,7 +95,7 @@ void adicionaSintoma(Doenca *doenca, char *nomeSintoma)
 
 /** 
  * Essa função é encarregada de remover um sintoma de uma doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - Doenca* doença: ponteiro da doença.
  *      - char* nomeSintoma: nome de sintoma a ser removido.
  * */
@@ -103,7 +103,7 @@ void removeSintoma(Doenca *doenca, char *nomeSintoma)
 {
     // Esta função remoe algum sintoma na lista de sintomas de alguma determinada doença
 
-    // Verifica que o ponteiro seja valido
+    // Verifica que o ponteiro seja válido
     if (doenca == NULL)
         return;
     // Busca posição do sintoma
@@ -149,7 +149,7 @@ ArvoreDoencas *criaArvoreDoencas()
 
 /** 
  * Essa função é encarregada de criar um novo nó associado á uma árvore de doenças.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó a ser criado.
  *      - int folha: indica se o nó a ser criado é uma folha.
  * Valor de Retorno: retorna o ponteiro do nó criado. 
@@ -179,8 +179,8 @@ NoDoencas *criaNoArvoreDoencas(ArvoreDoencas *r, int folha)
 }
 
 /** 
- * Essa função é encarregada de liberar a memoria de um nó da árvore de doenças.
- * Parámetros: 
+ * Essa função é encarregada de liberar a memória de um nó da árvore de doenças.
+ * Parâmetros: 
  *      - NoDoencas* no: ponteiro do nó a ser liberado.
  * */
 void liberarNoArvoreDoencas(NoDoencas *no)
@@ -193,8 +193,8 @@ void liberarNoArvoreDoencas(NoDoencas *no)
 }
 
 /** 
- * Essa função é encarregada de fechar os nós abertos e liberar a memoria utilizada pela árvore de doenças.
- * Parámetros: 
+ * Essa função é encarregada de fechar os nós abertos e liberar a memória utilizada pela árvore de doenças.
+ * Parâmetros: 
  *      - ArvoreDoencas* a: árvore de doencas a ser liberada.
  * */
 void liberarArvoreDoencas(ArvoreDoencas *a)
@@ -203,15 +203,15 @@ void liberarArvoreDoencas(ArvoreDoencas *a)
         return;
     // Libera nós  abertos
     liberarNosAbertos(a);
-    // Libera raiz
+    // Libera raíz
     liberarNo(a->raiz, a);
-    // Libera memoria
+    // Libera memória
     free(a);
 }
 
 /** 
  * Essa função é encarregada de inserir uma nova doença à árvore de doenças.
- * Parámetros: 
+ * Parâmetros: 
  *      - Doenca* doenca: ponteiro da doença a ser inserida.
  *      - ArvoreDoencas* a: árvore de doencas do nó a ser criado.
  * */
@@ -240,7 +240,7 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
     }
     else // CASO: Arvore não vazia
     {
-        if (getNo(a->raiz, a)->nChaves == MAX_CHAVES) // CASO: raiz completa
+        if (getNo(a->raiz, a)->nChaves == MAX_CHAVES) // CASO: raíz completa
         {
             NoDoencas *novo = criaNoArvoreDoencas(a, 0);
             novo->filhos[0] = a->raiz;
@@ -256,7 +256,7 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
             }
             a->raiz = novo->id;
         }
-        else // CASO: raiz com espaços livres
+        else // CASO: raíz com espaços livres
         {
             inserirNo(a, doenca, getNo(a->raiz, a));
         }
@@ -269,7 +269,7 @@ void inserirDoenca(Doenca *doenca, ArvoreDoencas *a)
 
 /** 
  * Essa função é encarregada de inserir uma doença em um no nó especificado (ou em um dos seus filhos).
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - Doenca* doenca: ponteiro da doença a ser inserida.
  *      - NoDoencas *a: ponteiro do nó destino. 
@@ -280,7 +280,7 @@ NoDoencas *inserirNo(ArvoreDoencas *r, Doenca *doenca, NoDoencas *a)
     int i = 0;
     if (a->folha) // CASO: No folha
     {
-        // Busca posicao e move chaves
+        // Busca posição e move chaves
         for (i = a->nChaves - 1; i >= 0 && a->chaves[i]->id > doenca->id; i--)
             a->chaves[i + 1] = a->chaves[i];
         a->chaves[i + 1] = doenca;
@@ -310,9 +310,9 @@ NoDoencas *inserirNo(ArvoreDoencas *r, Doenca *doenca, NoDoencas *a)
 
 /** 
  * Essa função é encarregada de dividir o filho do nó especificado
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
- *      - int pos: posição a do filho a ser divido
+ *      - int pos: posição a do filho a ser dividido
  *      - NoDoencas* no: ponteiro do nó pai do filho.
  *      - NoDoencas* filho: ponteiro do nó a ser dividido. 
  * */
@@ -322,7 +322,7 @@ void dividirFilho(ArvoreDoencas *r, int pos, NoDoencas *no, NoDoencas *filho)
     NoDoencas *novo = criaNoArvoreDoencas(r, filho->folha);
     novo->nChaves = MIN_CHAVES;
 
-    // Copia os ultimos elementos para o novo nó
+    // Copia os últimos elementos para o novo nó
     for (i = 0; i < MIN_CHAVES; i++)
         novo->chaves[i] = filho->chaves[T + i];
 
@@ -341,18 +341,18 @@ void dividirFilho(ArvoreDoencas *r, int pos, NoDoencas *no, NoDoencas *filho)
     // Adiciona novo filho
     no->filhos[pos + 1] = novo->id;
 
-    // Abre espaco para a nova chave
+    // Abre espaço para a nova chave
     for (i = no->nChaves - 1; i >= pos; i--)
         no->chaves[i + 1] = no->chaves[i];
 
-    // Copia a mediana do filho para o nó e atualiza nro chaves
+    // Copia a mediana do filho para o nó e atualiza número de chaves
     no->chaves[pos] = filho->chaves[MIN_CHAVES];
     no->nChaves += 1;
 }
 
 /** 
  * Essa função é encarregada de remover uma doença especificada da árvore de doenças
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* a: árvore de doencas da doença a ser removida.
  *      - int id: identificador da doença a ser removida.
  * */
@@ -381,7 +381,7 @@ void removerDoenca(ArvoreDoencas *a, int id)
         else
             a->raiz = getNo(a->raiz, a)->filhos[0];
 
-        // Desaloca raiz antiga
+        // Desaloca raíz antiga
         liberarNo(tmp->id, a);
     }
 #if AUTO_SALVAR
@@ -391,7 +391,7 @@ void removerDoenca(ArvoreDoencas *a, int id)
 
 /** 
  * Essa função é encarregada de remover a doença especificado do nó (ou de um dos seus filhos)
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó e doença.
  *      - int id: identificador da doença a ser removida.
  *      - NoDoencas* no: ponteiro do nó especificado para remoção da doença.
@@ -399,7 +399,7 @@ void removerDoenca(ArvoreDoencas *a, int id)
 void remover(ArvoreDoencas *r, int id, NoDoencas *a)
 {
     int pos = 0;
-    // Busca posicao da chave ou da primeira chave maior
+    // Busca posição da chave ou da primeira chave maior
     while (pos < a->nChaves && a->chaves[pos]->id < id)
         ++pos;
     // CASO: Nó contem a chave
@@ -446,7 +446,7 @@ void remover(ArvoreDoencas *r, int id, NoDoencas *a)
 
 /** 
  * Essa função é encarregada de executar os passos para remover uma chave de um nó interno.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser removida.
@@ -493,7 +493,7 @@ void removerDeInterno(ArvoreDoencas *r, NoDoencas *a, int pos)
 
 /** 
  * Essa função é encarregada de executar os passos para remover uma chave de um nó folha.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser removida.
@@ -512,7 +512,7 @@ void removerDeFolha(ArvoreDoencas *r, NoDoencas *a, int pos)
 
 /** 
  * Essa função é encarregada de combinar dois nós de outro nó.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó pai dos filhos a serem combinados.
  *      - int pos: posição da chave vizinha dos nós a serem combinados.
@@ -537,7 +537,7 @@ void combinarFilhos(ArvoreDoencas *r, NoDoencas *a, int pos)
     for (int i = pos + 1; i < a->nChaves; ++i)
         a->chaves[i - 1] = a->chaves[i];
 
-    // Move os filhos para suas posicoes corretas
+    // Move os filhos para suas posições corretas
     for (int i = pos + 2; i <= a->nChaves; ++i)
         a->filhos[i - 1] = a->filhos[i];
 
@@ -545,14 +545,14 @@ void combinarFilhos(ArvoreDoencas *r, NoDoencas *a, int pos)
     esq->nChaves += dir->nChaves + 1;
     a->nChaves--;
 
-    // Libera no
+    // Libera nó
     dir->nChaves = -1;
     liberarNo(dir->id, r);
 }
 
 /** 
  * Essa função é encarregada de executar as operações que para doar uma chave do nó direito para o seu pai. 
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser movida.
@@ -590,7 +590,7 @@ void doadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos)
 
 /** 
  * Essa função é encarregada de executar as operações que para doar uma chave do nó esquerdo para o seu pai. 
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser movida.
@@ -626,7 +626,7 @@ void doadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos)
 /** 
  * Essa função é encarregada de imprimir a estrutura da árvore, junto com o ids das chaves. 
  * Utilizada no desenvolvimento para verificar as operações sobre a àrvore.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó selecionado.
  *      - int h: altura do nó a ser impresso.
@@ -650,7 +650,7 @@ void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h)
 
 /** 
  * Essa função é encarregada de executar a função imprimeDoenca sobre todas as chaves da árvore
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* r: árvore de doencas do nó.
  *      - NoDoencas* a: nó selecionado.
  * */
@@ -675,7 +675,7 @@ void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a)
 
 /** 
  * Essa função é encarregada de verificar se o nó esteja cheio.
- * Parámetros: 
+ * Parâmetros: 
  *      - NoDoencas* a: nó a ser verificado.
  * Valor de retorno: 
  *      - 1 caso o nó esteja cheio.
@@ -688,7 +688,7 @@ int isCheio(NoDoencas *a)
 
 /** 
  * Essa função é encarregada de verificar se o nó esteja vazio.
- * Parámetros: 
+ * Parâmetros: 
  *      - NoDoencas* a: nó a ser verificado.
  * Valor de retorno: 
  *      - 1 caso o nó esteja vazio.
@@ -701,7 +701,7 @@ int isVazio(NoDoencas *a)
 
 /** 
  * Essa função é encarregada de verificar se o nó é folha.
- * Parámetros: 
+ * Parâmetros: 
  *      - NoDoencas* a: nó a ser verificado.
  * Valor de retorno: 
  *      - 1 caso o nó seja folha.
@@ -714,7 +714,7 @@ int isFolha(NoDoencas *a)
 
 /** 
  * Essa função é encarregada de retornar o ponteiro da doença especificada.
- * Parámetros: 
+ * Parâmetros: 
  *      - int id: identificador da doenca.
  *      - ArvoreDoencas *a: ponteiro da árvore onde será pesquisada a doença.
  * Valor de retorno: retorna o ponteiro da doença solicitada; ou NULL caso ela não exista
@@ -730,7 +730,7 @@ Doenca *getDoenca(int id, ArvoreDoencas *a)
 
 /** 
  * Essa função é encarregada de verificar que o nó esteja cheio.
- * Parámetros: 
+ * Parâmetros: 
  *      - NoDoencas* a: nó a ser verificado.
  * Valor de retorno: 
  *      - 1 caso o nó esteja cheio
@@ -772,9 +772,9 @@ ArvoreDoencas *carregaArvDoencas()
 }
 
 /** 
- * Essa função é encarregada de verificar se um nó já esta carregado; caso contrario, carrega o nó; 
+ * Essa função é encarregada de verificar se um nó já esta carregado, caso contrario, carrega o nó; 
  * finalmente retorna o nó com o id especificado.
- * Parámetros: 
+ * Parâmetros: 
  *      - int idNo: identificador do nó a ser carregado.
  *      - ArvoreDoencas* a: ponteiro da árvore do nó.
  * Valor de retorno: retorna o ponteiro do nó solicitado.
@@ -814,7 +814,7 @@ NoDoencas *getNo(int idNo, ArvoreDoencas *a)
 
 /** 
  * Essa função é encarregada de salvar todos os nós abertos da árvore especificada.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreeDoencas* a: ponteiro da árvore a ser salvada.
  * */
 void persistirArvDoencas(ArvoreDoencas *a)
@@ -835,7 +835,7 @@ void persistirArvDoencas(ArvoreDoencas *a)
 /** 
  * Essa função é encarregada de pesquisar o nó solicitado e pasar o seu ponteiro
  * para função "persisteNoArq" para ser salvado no arquivo.
- * Parámetros: 
+ * Parâmetros: 
  *      - int id: identificador do nó a ser persistido.
  *      - ArvoreDoencas* a: ponteiro da árvore dona do nó.
  * */
@@ -853,7 +853,7 @@ void persistirNo(int id, ArvoreDoencas *a)
 
 /** 
  * Essa função é encarregada de liberar todos os nós abertos da árvore especificada.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas* a: ponteiro da árvore a com os nós a serem liberados.
  * */
 void liberarNosAbertos(ArvoreDoencas *a)
@@ -863,8 +863,8 @@ void liberarNosAbertos(ArvoreDoencas *a)
 }
 
 /** 
- * Essa função é encarregada de liberar a memoria do nó especificado.
- * Parámetros: 
+ * Essa função é encarregada de liberar a memória do nó especificado.
+ * Parâmetros: 
  *      - int id: identificador do nó a ser liberado.
  *      - ArvoreDoencas* a: árvore do nó a ser liberado.
  * */
@@ -902,7 +902,7 @@ void liberarNo(int id, ArvoreDoencas *a)
 
 /** 
  * Essa função é encarregada de salvar o nó especificado no seu arquivo.
- * Parámetros: 
+ * Parâmetros: 
  *      - NoDoencas* no: ponteiro do nó a ser salvado.
  * Valor de retorno: 
  *      - 1 caso o arquivo seja salvado com sucesso.
@@ -953,7 +953,7 @@ int persisteNoArq(NoDoencas *no)
 
 /** 
  * Essa função é encarregada de carregar um nó desde seu arquivo.
- * Parámetros: 
+ * Parâmetros: 
  *      - int id: identificador do nó a ser carregado.
  * Valor de retorno: retorna o ponteiro do nó carregado.
  * */
@@ -1021,7 +1021,7 @@ NoDoencas *carregaArqNo(int id)
 /** 
  * Essa função é encarregada de persistir as informações base da árvore,
  * como: nro. de doenças, id do nó raiz, id maximo, ordem da árvore B.
- * Parámetros: 
+ * Parâmetros: 
  *      - ArvoreDoencas *a: ponteiro da árvore a ser persistida.
  * Valor de retorno: 
  *      - 1 caso o arquivo seja salvado corretamente.

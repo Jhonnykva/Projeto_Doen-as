@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-// Verifica que a pasta de dados sempre  exista
+// Verifica que a pasta de dados sempre exista
 #if defined(_WIN32)
     _mkdir(DATA_HOME);
 #else
@@ -14,27 +14,27 @@ int main(int argc, char **argv)
     {
         if (argv[i][0] == '-' && argv[i][1] == 'o' && i + 1 < argc)
         {
-            if (strcmp(argv[i + 1], "lstDoencas") == 0) // Listar doencas
+            if (strcmp(argv[i + 1], "lstDoencas") == 0) // Listar doenças
             {
                 status = lstDoencas(argc, argv);
             }
-            else if (strcmp(argv[i + 1], "genDoencas") == 0) // Gerar doencas
+            else if (strcmp(argv[i + 1], "genDoencas") == 0) // Gerar doenças
             {
                 status = genDoencas(argc, argv);
             }
-            else if (strcmp(argv[i + 1], "buscarDoenca") == 0) // Buscar doenca
+            else if (strcmp(argv[i + 1], "buscarDoenca") == 0) // Buscar doença
             {
                 status = buscarDoenca(argc, argv);
             }
-            else if (strcmp(argv[i + 1], "buscarDoencas") == 0) // Buscar doencas por sintomas
+            else if (strcmp(argv[i + 1], "buscarDoencas") == 0) // Buscar doenças por sintomas
             {
                 status = buscarDoencas(argc, argv);
             }
-            else if (strcmp(argv[i + 1], "addDoenca") == 0) // Adicionar doenca
+            else if (strcmp(argv[i + 1], "addDoenca") == 0) // Adicionar doença
             {
                 status = addDoenca(argc, argv);
             }
-            else if (strcmp(argv[i + 1], "rmDoenca") == 0) // Remover doenca
+            else if (strcmp(argv[i + 1], "rmDoenca") == 0) // Remover doença
             {
                 status = rmDoenca(argc, argv);
             }
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 /** 
  * Essa função é encarregada de imprimir todas as doenças (com seus sintomas)
  * armanezadas na árvore de doenças.
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
@@ -86,8 +86,8 @@ int lstDoencas(int argc, char **argv)
 
 /** 
  * Essa função é encarregada de executar a operação de geração de 
- * doencas e sintomas de teste.
- * Parámetros: 
+ * doenças e sintomas de teste.
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
@@ -105,7 +105,7 @@ int genDoencas(int argc, char **argv)
             else if (argv[i][1] == 'p')
                 print = 1;
         }
-    // Valida nro de doencas a gerar
+    // Valida nro de doenças para se gerar
     if (n <= 0)
     {
         printf("Número de doencas inválido. :(\n");
@@ -147,9 +147,9 @@ int genDoencas(int argc, char **argv)
         else
             strcpy(label, "NORMAL");
         sprintf(nome, "Doenca %d (%s)", i, label);
-        // Cria doenca
+        // Cria doença
         doencas[i] = criaDoenca(i, nome, 0, NULL);
-        // Relaciona doenca e sintomas
+        // Relaciona doença e sintomas
         adicionaSintoma(doencas[i], sintomas[i]->nome);
         adicionaDoencaSintoma(sintomas[i], doencas[i]->id);
         for (int j = 1; j < nSintD; j++)
@@ -167,16 +167,16 @@ int genDoencas(int argc, char **argv)
         doencas[i] = doencas[j];
         doencas[j] = tmp;
     }
-    // Insere doencas na arvore
+    // Insere doenças na árvore
     printf("Inserindo doenças...\n");
     for (i = 0; i < nDoencas; i++)
         inserirDoenca(doencas[i], aDoencas);
 
-    // Persiste Arvore de doencas e Tabela de sintomas
+    // Persiste árvore de doenças e Tabela de sintomas
     printf("Persistindo dados...\n");
     persistirArvDoencas(aDoencas);
     salvarTHSSintoma(tSintomas);
-    // Imprime doencas geradas
+    // Imprime doenças geradas
     if (print)
         imprimeDoencas(aDoencas, getNo(aDoencas->raiz, aDoencas));
     // Libera estruturas
@@ -191,7 +191,7 @@ int genDoencas(int argc, char **argv)
 /** 
  * Essa função é encarregada de executar a operação busca de uma 
  * doença específica pelo seu identificador (id).
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
@@ -199,7 +199,7 @@ int genDoencas(int argc, char **argv)
 int buscarDoenca(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
-    // Obtem parametros
+    // Obtém parâmetros
     int n = -1, id = -1;
     for (int i = 0; i < argc; i++)
     {
@@ -214,16 +214,16 @@ int buscarDoenca(int argc, char **argv)
         printf("ID inválido. :(\n");
         return 1;
     }
-    // Carrega arvore
+    // Carrega árvore
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
-    // Busca doenca
+    // Busca doença
     Doenca *doenca = getDoenca(id, aDoencas);
-    // Imprime doenca caso exista
+    // Imprime doença caso exista
     if (doenca == NULL)
         printf("Doença %d não encontrada. :(\n", id);
     else
         imprimeDoenca(doenca);
-    //  Libera memoria
+    //  Libera memória
     liberarArvoreDoencas(aDoencas);
     return 0;
 }
@@ -231,7 +231,7 @@ int buscarDoenca(int argc, char **argv)
 /** 
  * Essa função é encarregada de executar a operação de busca e 
  * classificação(pelo nro. de coincidências) de doenças por seus sintomas.
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
@@ -239,7 +239,7 @@ int buscarDoenca(int argc, char **argv)
 int buscarDoencas(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
-    // Obtem parametros
+    // Obtém parâmetros
     int nSintomas = 0;                                                          // Nro. de sintomas
     char bSintomas[MAX_BUFFER_SINTOMAS + 1] = "",                               // Buffer de string de sintomas
         *aux = NULL;                                                            // Ponteiro auxiliar
@@ -284,7 +284,7 @@ int buscarDoencas(int argc, char **argv)
 
     int maxDoencas = MAX_SINTOMAS_BUSCA * nSintVal, nDoencas = 0;
     BuscaDoencas *doencas = (BuscaDoencas *)malloc(maxDoencas * sizeof(BuscaDoencas));
-    // Busca doencas
+    // Busca doenças
     for (int i = 0; i < nSintVal; i++)
     {
         for (int j = 0; j < sintomas[i]->nDoencas; j++)
@@ -315,7 +315,7 @@ int buscarDoencas(int argc, char **argv)
     }
 
     printf("SINTOMAS %d/%d -> DOENCAS %d\n", nSintVal, nSintomas, nDoencas);
-    // Utiliza heap-sort para organizar por nro de sintomas que contem a doenca
+    // Utiliza heap-sort para organizar por nro de sintomas que contém a doença
     heap_sort(doencas, nDoencas);
     for (int i = 0; i < nDoencas; i++)
     {
@@ -323,7 +323,7 @@ int buscarDoencas(int argc, char **argv)
         imprimeDoenca(doencas[i].doenca);
     }
 
-    // Libera memoria
+    // Libera memória
     liberaTHSintomas(tSintomas);
     liberarArvoreDoencas(aDoencas);
     free(nomeSintomas);
@@ -335,14 +335,14 @@ int buscarDoencas(int argc, char **argv)
 
 /** 
  * Essa função é encarregada de executar a operação de inserção de uma doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
  * */
 int addDoenca(int argc, char **argv)
 {
-    // Obtem parametros
+    // Obtém parâmetros
     int n = -1, nSintomas = 0;
     char nome[MAX_NOME] = "",
          bSintomas[MAX_BUFFER_SINTOMAS] = "",
@@ -365,7 +365,7 @@ int addDoenca(int argc, char **argv)
             nomeSintomas[nSintomas++] = aux;
         aux = strtok(NULL, ",");
     }
-    //Validacoes
+    //Validações
     if (strlen(nome) <= 0)
     {
         printf("Nome inválido. :(\n");
@@ -381,7 +381,7 @@ int addDoenca(int argc, char **argv)
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Cria doenca
     Doenca *doenca = criaDoenca(aDoencas->nDoencas, nome, 0, NULL);
-    // Relaciona doenca com seus sintomas
+    // Relaciona doença com seus sintomas
     for (int i = 0; i < nSintomas; i++)
     {
         Sintoma *sintoma = getSintoma(tSintomas, nomeSintomas[i]);
@@ -398,10 +398,10 @@ int addDoenca(int argc, char **argv)
     // Persiste dados
     persistirArvDoencas(aDoencas);
     salvarTHSSintoma(tSintomas);
-    // Imprime doenca
+    // Imprime doença
     printf("Doenca registrada! :)\n");
     imprimeDoenca(doenca);
-    //  Libera memoria
+    //  Libera memória
     liberarArvoreDoencas(aDoencas);
     liberaTHSintomas(tSintomas);
     return 0;
@@ -409,14 +409,14 @@ int addDoenca(int argc, char **argv)
 
 /** 
  * Essa função é encarregada de executar a operação de remoção de uma doença.
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
  * */
 int rmDoenca(int argc, char **argv)
 {
-    // Obtem parametros
+    // Obtem parâmetros
     int id = -1;
     for (int i = 0; i < argc; i++)
     {
@@ -424,7 +424,7 @@ int rmDoenca(int argc, char **argv)
             if (strcmp(argv[i], "-id") == 0 && i + 1 < argc)
                 sscanf(argv[++i], "%d", &id);
     }
-    //Validacoes
+    //Validações
     if (id < 0)
     {
         printf("ID %d inválido. :(\n", id);
@@ -434,7 +434,7 @@ int rmDoenca(int argc, char **argv)
     printf("Carregando doenças...\n");
     ArvoreDoencas *aDoencas = carregaArqArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
-    // Busca doenca
+    // Busca doença
     Doenca *doenca = getDoenca(id, aDoencas);
     if (doenca == NULL)
     {
@@ -449,13 +449,13 @@ int rmDoenca(int argc, char **argv)
     }
     // Remove Doença
     removerDoenca(aDoencas, doenca->id);
-    // Persiste dados
+    // Mantém dados
     printf("Salvando mudanças...\n");
     persistirArvDoencas(aDoencas);
     salvarTHSSintoma(tSintomas);
     // Notificação
     printf("Doenca %d removida! :)\n", id);
-    //  Libera memoria
+    //  Libera memória
     liberarArvoreDoencas(aDoencas);
     liberaTHSintomas(tSintomas);
     return 0;
@@ -463,14 +463,14 @@ int rmDoenca(int argc, char **argv)
 
 /** 
  * Essa função é encarregada de executar a operação de inserção de um sintoma.
- * Parámetros: 
+ * Parâmetros: 
  *      - int argc: nro. de argumentos de execução.
  *      - char** argv: vetor de argumentos de execução.
  * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
  * */
 int addSintoma(int argc, char **argv)
 {
-    // Obtem parametros
+    // Obtem parâmetros
     int nDoencas = 0, doencas[MAX_DOENCAS_BUSCA];
     char nomeSintoma[MAX_NOME] = "", sDoencas[MAX_BUFFER_DOENCAS] = "";
     for (int i = 0; i < argc; i++)
@@ -483,13 +483,13 @@ int addSintoma(int argc, char **argv)
                 strncat(sDoencas, argv[++i], MAX_BUFFER_DOENCAS - 1);
         }
     }
-    //Validacoes
+    //Validações
     if (strlen(nomeSintoma) <= 0)
     {
         printf("Nome de sintoma inválido. :(\n");
         return 1;
     }
-    // Separa id de doencas
+    // Separa id de doenças
     char *aux = strtok(sDoencas, ",");
     while (aux != NULL && nDoencas < MAX_DOENCAS_BUSCA)
     {
@@ -533,7 +533,7 @@ int addSintoma(int argc, char **argv)
     salvarTHSSintoma(tSintomas);
     // Notificação
     printf("Sintoma \"%s\" adicionado! :)\n", nomeSintoma);
-    // Libera memoria
+    // Libera memória
     liberarArvoreDoencas(aDoencas);
     liberaTHSintomas(tSintomas);
     return 0;
@@ -607,7 +607,7 @@ void imprimeOperacoes()
     printf("-> Remoção de uma doença\n");
     printf("\t -o rmDoenca -id <ID da doença>\n");
     printf("-> Inserção de um sintoma\n");
-    printf("\t -o addDoenca -nome \"<Nome da doença>\" -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
+    printf("\t -o addSintoma -nome \"<Nome da doença>\" -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
     printf("-> Remoção de um sintoma\n");
     printf("\t -o rmDoenca -nome \"<Nome do sintoma>\"\n");
     printf("-> Busca de doença por ID\n");
@@ -624,7 +624,7 @@ void imprimeOperacoes()
 
 /** 
  * Função encarregada de calcular o indice do filho esquerdo de um "nó" do heap.
- * Parámetros: 
+ * Parâmetros: 
  *      - int i: indice do nó pai.
  * Valor de retorno: retorna o indice do filho esquerdo do nó especificado.
  * */
@@ -635,7 +635,7 @@ int esquerda(int i)
 
 /** 
  * Função encarregada de calcular o indice do filho direito de um "nó" do heap.
- * Parámetros: 
+ * Parâmetros: 
  *      - int i: indice do nó pai.
  * Valor de retorno: retorna o indice do filho direito do nó especificado.
  * */
@@ -646,7 +646,7 @@ int direita(int i)
 
 /** 
  * Função encarregada de trocar os valores entre os dois indices especificados
- * Parámetros: 
+ * Parâmetros: 
  *      - BuscaDoencas *v: ponteiro do vetor do heap.
  *      - int a: indice do primeiro elemento.
  *      - int b: indice do segundo elemento.
@@ -661,7 +661,7 @@ void trocar(BuscaDoencas v[], int a, int b)
 /** 
  * Função encarregada de organizar os pais e os filho do nó, de forma que o 
  * pai seja maior que seus filhos.
- * Parámetros: 
+ * Parâmetros: 
  *      - BuscaDoencas *v: ponteiro do vetor do heap.
  *      - int n: tamanho do vetor do heap.
  *      - int i: indice do nó.
@@ -687,8 +687,8 @@ void max_heapify(BuscaDoencas *v, int n, int i)
 
 /** 
  * Função encarregada de contruir o heap máximo
- * Parámetros: 
- *      - BuscaDoencas* v: vetor onde sobre o qual será contruido o heap maximo 
+ * Parâmetros: 
+ *      - BuscaDoencas* v: vetor onde sobre o qual será contruido o heap máximo 
  *      - int n: tamanho do vetor.
  * */
 void build_max_heap(BuscaDoencas *v, int n)
