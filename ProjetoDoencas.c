@@ -208,22 +208,22 @@ int buscarDoencas(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
     // Obtem parametros
-    int nSintomas = 0;                                                    // Nro. de sintomas
-    char bSintomas[MAX_BUFFER_SINTOMAS + 1] = "",                         // Buffer de string de sintomas
-        *aux = NULL;                                                      // Ponteiro auxiliar
-    char **nomeSintomas = (char **)malloc(MAX_SINTOMAS * sizeof(char *)); // Vetor de sintomas
+    int nSintomas = 0;                                                          // Nro. de sintomas
+    char bSintomas[MAX_BUFFER_SINTOMAS + 1] = "",                               // Buffer de string de sintomas
+        *aux = NULL;                                                            // Ponteiro auxiliar
+    char **nomeSintomas = (char **)malloc(MAX_SINTOMAS_BUSCA * sizeof(char *)); // Vetor de sintomas
     for (int i = 0; i < argc; i++)
     {
         if (argv[i][0] == '-')
         {
             if (strcmp(argv[i], "-sintomas") == 0 && i + 1 < argc)
-                strncat(bSintomas, argv[++i], MAX_NOME - 1);
+                strncat(bSintomas, argv[++i], MAX_BUFFER_SINTOMAS);
         }
     }
 
     // Separa nome de sintomas
     aux = strtok(bSintomas, ",");
-    while (aux != NULL && nSintomas < MAX_SINTOMAS - 1)
+    while (aux != NULL && nSintomas < MAX_SINTOMAS_BUSCA - 1)
     {
         if (aux != NULL)
             nomeSintomas[nSintomas++] = aux;
@@ -250,7 +250,7 @@ int buscarDoencas(int argc, char **argv)
             sintomas[nSintVal++] = sintoma;
     }
 
-    int maxDoencas = MAX_SINTOMAS * nSintVal, nDoencas = 0;
+    int maxDoencas = MAX_SINTOMAS_BUSCA * nSintVal, nDoencas = 0;
     BuscaDoencas *doencas = (BuscaDoencas *)malloc(maxDoencas * sizeof(BuscaDoencas));
     // Busca doencas
     for (int i = 0; i < nSintVal; i++)
@@ -418,7 +418,7 @@ int rmDoenca(int argc, char **argv)
 int addSintoma(int argc, char **argv)
 {
     // Obtem parametros
-    int nDoencas = 0, doencas[MAX_DOENCAS];
+    int nDoencas = 0, doencas[MAX_DOENCAS_BUSCA];
     char nomeSintoma[MAX_NOME] = "", sDoencas[MAX_BUFFER_DOENCAS] = "";
     for (int i = 0; i < argc; i++)
     {
@@ -438,7 +438,7 @@ int addSintoma(int argc, char **argv)
     }
     // Separa id de doencas
     char *aux = strtok(sDoencas, ",");
-    while (aux != NULL && nDoencas < MAX_DOENCAS)
+    while (aux != NULL && nDoencas < MAX_DOENCAS_BUSCA)
     {
         int idTmp = -1;
         if (aux != NULL)
