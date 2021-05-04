@@ -15,34 +15,32 @@ Sintoma *criaSintoma(char *nomeSintoma);
 void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca);
 void removerDoencaSintoma(Sintoma *sintoma, int idDoenca);
 void liberaSintoma(Sintoma *sintoma);
+
 /**
  * Tabela Hash de sintomas
  * **/
 
 #define SINTOMAS_ARQ "sintomas.ths"
-#define FLAG_SINT_RM "SRM"
+#define FLAG_SINT_RM "SRM" // Bandeira de elemento eliminado
+
 typedef struct tabelaHashSintoma
 {
-    Sintoma **estrutura_sintoma;
+    Sintoma **sintomas;
     int M; //número de posições
     int N; //número de itens
 
 } THSintomas;
 
-//--------TABELA HASH - FUNÇÕES PRINCIPAIS
 THSintomas *criarTHSintomas(int M);
 int funcaoHashSintoma(char *nome_sintoma, int M);
 void inserirSintoma(THSintomas *H, Sintoma *sintoma);
 void removerSintoma(THSintomas *H, char *nomeSintoma);
-Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
 void liberaTHSintomas(THSintomas *H);
 
-//--------TABELA HASH - FUNÇÕES SECUNDÁRIAS
 int isFull(THSintomas *H);
 int verificaSintomaExistente(char sintoma[], THSintomas *H);
 void imprimirTHCompleta(THSintomas *H);
-
-//--------FUNÇÕES DE ARQUIVOS
+Sintoma *getSintoma(THSintomas *H, char *nomeSintoma);
 
 int salvarTHSSintoma(THSintomas *H);
 THSintomas *carregaArqTHSintomas();

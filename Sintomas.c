@@ -4,6 +4,12 @@
  * Sintomas
  * **/
 
+/** 
+ * Essa função é encarregada de alocar memoria para um novo sintoma.
+ * Parámetros: 
+ *      - char* nomeSintoma: nome do sintoma a ser criado.
+ * Valor de retorno: retorna o ponteiro do sintoma criado.
+ * */
 Sintoma *criaSintoma(char *nomeSintoma)
 {
     Sintoma *sintoma = (Sintoma *)malloc(sizeof(Sintoma));
@@ -12,6 +18,13 @@ Sintoma *criaSintoma(char *nomeSintoma)
     strcpy(sintoma->nome, nomeSintoma);
     return sintoma;
 }
+
+/** 
+ * Essa função é encarregada de associar uma doença ao sintoma especificado.
+ * Parámetros: 
+ *      - Sintoma* sintoma: ponteiro do sintoma.
+ *      - int idDoenca: identificador da doença a ser associada.
+ * */
 void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca)
 {
     // Verifica que o ponteiro seja valido
@@ -31,6 +44,12 @@ void adicionaDoencaSintoma(Sintoma *sintoma, int idDoenca)
     }
 }
 
+/** 
+ * Essa função é encarregada de desassociar uma doença do sintoma especificado.
+ * Parámetros: 
+ *      - Sintoma* sintoma: ponteiro do sintoma.
+ *      - int idDoenca: identificador da doença a ser desassociada.
+ * */
 void removerDoencaSintoma(Sintoma *sintoma, int idDoenca)
 {
     // Verifica que o ponteiro seja valido
@@ -52,6 +71,11 @@ void removerDoencaSintoma(Sintoma *sintoma, int idDoenca)
     }
 }
 
+/** 
+ * Essa função é encarregada de liberar a memoria ocupada por um sintoma.
+ * Parámetros: 
+ *      - Sintoma* sintoma: ponteiro do sintoma a ser liberado.
+ * */
 void liberaSintoma(Sintoma *sintoma)
 {
     // Libera vetor de doencas
@@ -59,10 +83,19 @@ void liberaSintoma(Sintoma *sintoma)
     // Libera sintoma
     free(sintoma);
 }
+
 /**
  * Tabela Hash de sintomas
  * **/
 
+/** 
+ * Essa função é encarregada de gerar o hash a partir do nome do sintoma,
+ * utilizando o método de Horner.
+ * Parámetros: 
+ *      - char * nomeS: nome do sintoma.
+ *      - int M: tamanho da tabela hash. 
+ * Valor de retorno: retorna o hash gerado a partir do nome.
+ * */
 int funcaoHashSintoma(char nomeS[], int M)
 {
     int i, h = nomeS[0];
@@ -71,19 +104,32 @@ int funcaoHashSintoma(char nomeS[], int M)
     return h;
 }
 
+/** 
+ * Essa função é encarregada de alocar memoria e inicializar as 
+ * variáveis da tabela hash de sintomas.
+ * Parámetros: 
+ *      - int M: tamanho da tabela a ser criada.
+ * Valor de retorno: retorna o ponteiro da tabela de sintomas criada.
+ * */
 THSintomas *criarTHSintomas(int M)
 {
     //Cria a tabela hash e retorna-a
     THSintomas *novaTabela = (THSintomas *)malloc(sizeof(THSintomas));
     novaTabela->M = M;
     novaTabela->N = 0;
-    novaTabela->estrutura_sintoma = (Sintoma **)malloc(M * sizeof(Sintoma *));
+    novaTabela->sintomas = (Sintoma **)malloc(M * sizeof(Sintoma *));
     // Inicia ponteiros da lista
     for (int i = 0; i < novaTabela->M; i++)
-        novaTabela->estrutura_sintoma[i] = NULL;
+        novaTabela->sintomas[i] = NULL;
     return novaTabela;
 }
 
+/** 
+ * Essa função é encarregada de verificar se existe e inserir um novo sintoma à tabela.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela de sintomas.
+ *      - Sintoma* sintoma: ponteiro do sintoma a ser inserido.
+ * */
 void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 {
     // Validacoes
@@ -102,81 +148,124 @@ void inserirSintoma(THSintomas *H, Sintoma *sintoma)
     // Aumenta número de itens
     H->N++;
     // Tratamento de colisão
-    while (H->estrutura_sintoma[localInsercao] != NULL &&
-           strcmp(H->estrutura_sintoma[localInsercao]->nome, FLAG_SINT_RM) != 0)
+    while (H->sintomas[localInsercao] != NULL &&
+           strcmp(H->sintomas[localInsercao]->nome, FLAG_SINT_RM) != 0)
         localInsercao = (localInsercao + 1) % (H->M);
 
     // Adiciona sintoma à tabela
-    H->estrutura_sintoma[localInsercao] = sintoma;
+    H->sintomas[localInsercao] = sintoma;
 #if DEBUG
     printf("Sintoma %s inserido\n", sintoma->nome);
 #endif
 }
 
+/** 
+ * Essa função é encarregada de eliminar o sintoma especificado da tabela.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela onde o sintoma será removido.
+ *      - char* nomeSintoma: nome do sintoma a ser removido.
+ * */
 void removerSintoma(THSintomas *H, char *nomeSintoma)
 {
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
     // Verifica se o sintoma existe
-    if (H->estrutura_sintoma[fH] == NULL)
+    if (H->sintomas[fH] == NULL)
     {
         printf("\nSintoma nao removido porque não existe.\n");
         return;
     }
 
     //REMOVENDO O SINTOMA DA TABELA
-    liberaSintoma(H->estrutura_sintoma[fH]);
-    H->estrutura_sintoma[fH] = criaSintoma(FLAG_SINT_RM);
+    liberaSintoma(H->sintomas[fH]);
+    H->sintomas[fH] = criaSintoma(FLAG_SINT_RM);
     H->N--;
 #if DEBUG
     printf("Sintoma %s removido\n", nomeSintoma);
 #endif
 }
 
-
+/** 
+ * Essa função é encarregada liberar a memoria ocupada pela 
+ * tabela de sintomas especificada.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela a ser liberada.
+ * */
 void liberaTHSintomas(THSintomas *H)
 {
     for (int i = 0; i < H->M; i++)
     {
-        if (H->estrutura_sintoma[i] != NULL) // Libera sintomas
-            liberaSintoma(H->estrutura_sintoma[i]);
+        if (H->sintomas[i] != NULL) // Libera sintomas
+            liberaSintoma(H->sintomas[i]);
     }
     // Libera vetor de sintomas
-    free(H->estrutura_sintoma);
+    free(H->sintomas);
     // Libera tabela
     free(H);
 }
 
+/** 
+ * Essa função é encarregada de verificar se um sintoma já existe 
+ * na tabela especificada.
+ * Parámetros: 
+ *      - char* sintoma: nome do sintoma a ser pesquisado.
+ *      - THSintomas *H: ponteiro da tabela no qual o sintoma será pesquisado.
+ * Valor de retorno:
+ *      - 1 caso o sintoma exista.
+ *      - 0 caso o sintoma não exista.
+ * */
 int verificaSintomaExistente(char *sintoma, THSintomas *H)
 {
     // Verifica se sintoma existe
-    if ((H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)] != NULL) && (strcpy(sintoma, H->estrutura_sintoma[funcaoHashSintoma(sintoma, H->M)]->nome) == 0))
+    if ((H->sintomas[funcaoHashSintoma(sintoma, H->M)] != NULL) && (strcpy(sintoma, H->sintomas[funcaoHashSintoma(sintoma, H->M)]->nome) == 0))
         return 1;
     else
         return 0;
 }
 
+/** 
+ * Essa função é encarregada de verificar se a tabela encontra-se cheia.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela a ser verificada.
+ * Valor de retorno: 
+ *      - 1 caso a tabela encontre-se cheia.
+ *      - 0 caso a tabela não encontre-se cheia.
+ * */
 int isFull(THSintomas *H)
 {
     // Verifica se a tabela está cheia
     return H->N >= H->M;
 }
 
+/** 
+ * Essa função foi utilizada no desenvolvimento para imprimir na consola todos
+ * os sintomas da tabela, para verificar o funcionamento das operações desenvolvidas.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela a ser impressa.
+ * */
 void imprimirTHCompleta(THSintomas *H)
 {
     //Esta função imprime a tabela hash completa
     printf("\n\nTabela Completa: \n");
     for (int i = 0; i < H->M; i++)
     {
-        if (H->estrutura_sintoma[i] != NULL)
+        if (H->sintomas[i] != NULL)
         {
-            printf("%d - %s -", i, H->estrutura_sintoma[i]->nome);
-            for (int j = 0; j < H->estrutura_sintoma[i]->nDoencas; j++)
-                printf(" %d", H->estrutura_sintoma[i]->doencaAssociada[j]);
+            printf("%d - %s -", i, H->sintomas[i]->nome);
+            for (int j = 0; j < H->sintomas[i]->nDoencas; j++)
+                printf(" %d", H->sintomas[i]->doencaAssociada[j]);
             printf("\n");
         }
     }
 }
 
+/** 
+ * Essa função é encarregada de pesquisar un sintoma especificado
+ * na tabela de sintomas.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela onde será pesquisado o sintoma.
+ *      - char *nomeSintoma: nome do sintoma a ser pesquisado.
+ * Valor de retorno: retorna o ponteiro do sintoma pesquisado; ou NULL caso não exista.
+ * */
 Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
 {
     if (nomeSintoma == NULL)
@@ -187,21 +276,29 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
     // Obtem posicao inicial
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
     // Verifica se a posicao inicial contem um ponteiro valido
-    if (H->estrutura_sintoma[fH] != NULL)
+    if (H->sintomas[fH] != NULL)
     {
         int i = 0;
         // Percorre tabela até encontrar o sintoma
-        while (i < H->M && H->estrutura_sintoma[fH + i] != NULL)
+        while (i < H->M && H->sintomas[fH + i] != NULL)
         {
-            if (strcmp(nomeSintoma, H->estrutura_sintoma[fH + i]->nome) == 0)
-                return H->estrutura_sintoma[fH + i]; // Retorna ponteiro do sintoma
+            if (strcmp(nomeSintoma, H->sintomas[fH + i]->nome) == 0)
+                return H->sintomas[fH + i]; // Retorna ponteiro do sintoma
             i++;
         }
     }
     return NULL;
 }
 
-// Carga/Persistencia THSintomas
+/** 
+ * Essa função é encarregada de salvar todos os sintomas contidos na tabela
+ * de sintomas no seu arquivo.
+ * Parámetros: 
+ *      - THSintomas* H: ponteiro da tabela a ser salvada.
+ * Valor de retorno: 
+ *      - 1 caso o arquivo seja salvado corretamente.
+ *      - 0 caso o arquivo não seja salvado corretamente.
+ * */
 int salvarTHSSintoma(THSintomas *H)
 {
 #if DEBUG
@@ -226,7 +323,7 @@ int salvarTHSSintoma(THSintomas *H)
     // Chaves
     for (int i = 0; i < H->M; i++)
     {
-        Sintoma *sintoma = H->estrutura_sintoma[i];
+        Sintoma *sintoma = H->sintomas[i];
         if (sintoma != NULL)
         {
             fprintf(arq, "%s\n", sintoma->nome);
@@ -238,6 +335,13 @@ int salvarTHSSintoma(THSintomas *H)
     return fclose(arq) == 0;
 }
 
+/** 
+ * Essa função é encarregada de carregar em memoria a tabela de 
+ * sintomas desde seu arquivo; ou criar uma nova tabela caso o arquivo não exista.
+ * Parámetros: 
+ *      - int _M: tamanho da tabela a ser criada caso o arquivo não exista.
+ * Valor de retorno: retorna o ponteiro da tabela de sintomas carregada/criada.
+ * */
 THSintomas *carregaArqTHSintomas(int _M)
 {
     // Gera nome arquivo
@@ -280,9 +384,8 @@ THSintomas *carregaArqTHSintomas(int _M)
         for (int j = 0; j < sintoma->nDoencas; j++)
             fscanf(arq, "%d\n", &sintoma->doencaAssociada[j]);
         // Coloca sintoma no seu indice
-        sintomas->estrutura_sintoma[i] = sintoma;
+        sintomas->sintomas[i] = sintoma;
     }
     fclose(arq);
     return sintomas;
 }
-
