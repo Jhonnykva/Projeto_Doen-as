@@ -76,8 +76,8 @@ void remover(ArvoreDoencas *r, int id, NoDoencas *a);
 void removerDeInterno(ArvoreDoencas *r, NoDoencas *a, int pos);
 void removerDeFolha(ArvoreDoencas *r, NoDoencas *a, int pos);
 void combinarFilhos(ArvoreDoencas *r, NoDoencas *a, int pos);
-void DoadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos);
-void DoadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos);
+void doadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos);
+void doadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos);
 
 // Funções de ajuda
 void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h);

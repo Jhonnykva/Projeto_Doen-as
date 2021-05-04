@@ -64,30 +64,37 @@ cleanData:
 
 # TESTE-01: Gera doenças para testar as funçoes
 teste1: $(EXEC)
+	@echo "TESTE-01: Geração de dados."
 	./ProjetoDoencas -o genDoencas -n 100000
 
 # TESTE-02: Cria manualmente uma doença
 teste2: $(EXEC)
+	@echo "TESTE-02: Inserção manual de uma doença."
 	./ProjetoDoencas -o addDoenca -nome "Doenca de Teste ;)" -sintomas "Sintoma A,Sintoma 1, Sintoma 2,Sintoma de Teste"
 
 # TESTE-03: Remove manualmente uma doença
 teste3: $(EXEC)
+	@echo "TESTE-03: Remoção de doença."
 	./ProjetoDoencas -o rmDoenca -id 1234
 
 # TESTE-04: Cria manualmente um sintoma
 teste4: $(EXEC)
+	@echo "TESTE-04: Criação manual de um sintoma."
 	./ProjetoDoencas -o addSintoma -nome "Sintoma de Teste 2" -doencas "1,54,12,14,60,100"
 
 # TESTE-05: Remove manualmente um sintoma
 teste5: $(EXEC)
+	@echo "TESTE-05: Remoção de um sintoma."
 	./ProjetoDoencas -o rmSintoma -nome "Sintoma 1234"
 
 # TESTE-06: Busca doenca por id
 teste6: $(EXEC)
+	@echo "TESTE-06: Busca de doença por ID."
 	./ProjetoDoencas -o buscarDoenca -id 12345
 
 # TESTE-07: Busca doenca por id
 teste7: $(EXEC)
+	@echo "TESTE-07: Busca de doenças por sintomas."
 	./ProjetoDoencas -o buscarDoencas -sintomas "Sintoma 1,Sintoma Invalido,Sintoma 123,Sintoma 321,Sintoma 34212"
 
 # Executa todos os testes

@@ -425,10 +425,10 @@ void remover(ArvoreDoencas *r, int id, NoDoencas *a)
         {
             // Verifica se a sub-árvore da esquerda pode doar
             if (pos != 0 && getNo(a->filhos[pos - 1], r)->nChaves >= T)
-                DoadorEsquerda(r, a, pos);
+                doadorEsquerda(r, a, pos);
             // Verifica se a sub-árvore da direita pode doar
             else if (pos != a->nChaves && getNo(a->filhos[pos + 1], r)->nChaves >= T)
-                DoadorDireita(r, a, pos);
+                doadorDireita(r, a, pos);
             // Caso nenhuma possa doar, combinar arvores
             else if (pos != a->nChaves)
                 combinarFilhos(r, a, pos);
@@ -557,7 +557,7 @@ void combinarFilhos(ArvoreDoencas *r, NoDoencas *a, int pos)
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser movida.
  * */
-void DoadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos)
+void doadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos)
 {
     NoDoencas *filho = getNo(a->filhos[pos], r),
               *dir = getNo(a->filhos[pos + 1], r);
@@ -595,7 +595,7 @@ void DoadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos)
  *      - NoDoencas* a: nó que contem a chave.
  *      - int pos: posição da chave a ser movida.
  * */
-void DoadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos)
+void doadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos)
 {
     NoDoencas *filho = getNo(a->filhos[pos], r),
               *esq = getNo(a->filhos[pos - 1], r);

@@ -62,6 +62,14 @@ int main(int argc, char **argv)
     return status;
 }
 
+/** 
+ * Essa função é encarregada de imprimir todas as doenças (com seus sintomas)
+ * armanezadas na árvore de doenças.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int lstDoencas(int argc, char **argv)
 {
     printf("Listar Doencas\n");
@@ -76,6 +84,14 @@ int lstDoencas(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de geração de 
+ * doencas e sintomas de teste.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int genDoencas(int argc, char **argv)
 {
     srand(time(NULL));
@@ -172,6 +188,14 @@ int genDoencas(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação busca de uma 
+ * doença específica pelo seu identificador (id).
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int buscarDoenca(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
@@ -204,6 +228,14 @@ int buscarDoenca(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de busca e 
+ * classificação(pelo nro. de coincidências) de doenças por seus sintomas.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int buscarDoencas(int argc, char **argv)
 {
     printf("Buscar Doencas\n");
@@ -301,6 +333,13 @@ int buscarDoencas(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de inserção de uma doença.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int addDoenca(int argc, char **argv)
 {
     // Obtem parametros
@@ -368,6 +407,13 @@ int addDoenca(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de remoção de uma doença.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int rmDoenca(int argc, char **argv)
 {
     // Obtem parametros
@@ -415,6 +461,13 @@ int rmDoenca(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de inserção de um sintoma.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int addSintoma(int argc, char **argv)
 {
     // Obtem parametros
@@ -486,6 +539,13 @@ int addSintoma(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de executar a operação de remoção de um sintoma.
+ * Parámetros: 
+ *      - int argc: nro. de argumentos de execução.
+ *      - char** argv: vetor de argumentos de execução.
+ * Valor de retorno: retorna o estado de execução (0 => OK, 1 => ERRO) 
+ * */
 int rmSintoma(int argc, char **argv)
 {
     // Obtem parametros
@@ -535,6 +595,9 @@ int rmSintoma(int argc, char **argv)
     return 0;
 }
 
+/** 
+ * Essa função é encarregada de imprimir as operações aceitadas.
+ * */
 void imprimeOperacoes()
 {
     printf("OPERAÇŌES VÁLIDAS:\n");
@@ -558,16 +621,36 @@ void imprimeOperacoes()
 /**
  * HeapSort para busca de doencas p/ Sintomas
  * **/
+
+/** 
+ * Função encarregada de calcular o indice do filho esquerdo de um "nó" do heap.
+ * Parámetros: 
+ *      - int i: indice do nó pai.
+ * Valor de retorno: retorna o indice do filho esquerdo do nó especificado.
+ * */
 int esquerda(int i)
 {
     return (i * 2) + 1;
 }
 
+/** 
+ * Função encarregada de calcular o indice do filho direito de um "nó" do heap.
+ * Parámetros: 
+ *      - int i: indice do nó pai.
+ * Valor de retorno: retorna o indice do filho direito do nó especificado.
+ * */
 int direita(int i)
 {
     return (i * 2) + 2;
 }
 
+/** 
+ * Função encarregada de trocar os valores entre os dois indices especificados
+ * Parámetros: 
+ *      - BuscaDoencas *v: ponteiro do vetor do heap.
+ *      - int a: indice do primeiro elemento.
+ *      - int b: indice do segundo elemento.
+ * */
 void trocar(BuscaDoencas v[], int a, int b)
 {
     BuscaDoencas aux = v[a];
@@ -575,6 +658,14 @@ void trocar(BuscaDoencas v[], int a, int b)
     v[b] = aux;
 }
 
+/** 
+ * Função encarregada de organizar os pais e os filho do nó, de forma que o 
+ * pai seja maior que seus filhos.
+ * Parámetros: 
+ *      - BuscaDoencas *v: ponteiro do vetor do heap.
+ *      - int n: tamanho do vetor do heap.
+ *      - int i: indice do nó.
+ * */
 void max_heapify(BuscaDoencas *v, int n, int i)
 {
     int esq = esquerda(i),
@@ -593,12 +684,26 @@ void max_heapify(BuscaDoencas *v, int n, int i)
         max_heapify(v, n, maior);
     }
 }
+
+/** 
+ * Função encarregada de contruir o heap máximo
+ * Parámetros: 
+ *      - BuscaDoencas* v: vetor onde sobre o qual será contruido o heap maximo 
+ *      - int n: tamanho do vetor.
+ * */
 void build_max_heap(BuscaDoencas *v, int n)
 {
     for (int i = n / 2 - 1; i >= 0; i--)
         max_heapify(v, n, i);
 }
 
+/** 
+ * Função encarregada de ordenar (de forma ascendente) o vetor especificado 
+ * utilizando o algoritmo HeapSort
+ * Parámetros: 
+ *      - BuscaDoencas* v: vetor a ser ordenado.
+ *      - int n: tamanho do vetor.
+ * */
 void heap_sort(BuscaDoencas v[], int n)
 {
     build_max_heap(v, n);
