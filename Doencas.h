@@ -6,16 +6,16 @@
 
 typedef struct doencas
 {
-  unsigned int id;          // Identificador de cada doença
-  char nome[MAX_NOME];      // Nome da doença
-  unsigned int nSintomas;   // Número de sintomas associados
-  char **sintomas;          // Ponteiros para os sintomas
+  int id;              // Identificador de cada doença
+  char nome[MAX_NOME]; // Nome da doença
+  int nSintomas;       // Número de sintomas associados
+  char **sintomas;     // Ponteiros para os sintomas
 
 } Doenca;
 
 //Funções de modelagem de doença
-Doenca *criaDoenca(unsigned int id, char *nome, unsigned int nSintomas, char **sintomas);
-void eliminaDoenca(Doenca *doenca);
+Doenca *criaDoenca(int id, char *nome, int nSintomas, char **sintomas);
+void liberaDoenca(Doenca *doenca);
 void imprimeDoenca(Doenca *doenca);
 void adicionaSintoma(Doenca *doenca, char *nomeSintoma);
 void removeSintoma(Doenca *doenca, char *nomeSintoma);
@@ -33,13 +33,13 @@ void removeSintoma(Doenca *doenca, char *nomeSintoma);
 #define DOENCAS_N_PRE "d-bt-"
 #define DOENCAS_N_EXT ".no"
 #define DOENCAS_CAB "doencas.btree"
+
 typedef struct no_doencas
 {
   int id;                     // Identificador único do nó
-  int folha, nChaves;         // Bool
-  Doenca *chaves[MAX_CHAVES]; // Limite superior
-  // struct no_doencas *filhos[MAX_FILHOS];
-  int filhos[MAX_FILHOS];
+  int folha, nChaves;         // Indicador de nó folha, nro. de chaves
+  Doenca *chaves[MAX_CHAVES]; // Chaves do nó
+  int filhos[MAX_FILHOS];     // Filhos do nó
 } NoDoencas;
 
 #define V_SIZE 5
@@ -59,19 +59,18 @@ typedef struct arvore_doenca
   int maxNoId;      // Número do último id de nó associado
 } ArvoreDoencas;
 
-// Criação
+// Criação/Liberação
 ArvoreDoencas *criaArvoreDoencas();
 NoDoencas *criaNoArvoreDoencas(ArvoreDoencas *r, int folha);
 void liberarNoArvoreDoencas(NoDoencas *no);
 void liberarArvoreDoencas(ArvoreDoencas *a);
 
-// A seguintes funções são funções de inserção
+// Inserção de chaves
 void inserirDoenca(Doenca *doenca, ArvoreDoencas *a);
 NoDoencas *inserirNo(ArvoreDoencas *r, Doenca *doenca, NoDoencas *a);
 void dividirFilho(ArvoreDoencas *r, int pos, NoDoencas *no, NoDoencas *filho);
 
-
-// As seguintes funções tratam-se de todos os possíveis casos de remoção de uma árvore B
+// Remoção de chaves
 void removerDoenca(ArvoreDoencas *a, int id);
 void remover(ArvoreDoencas *r, int id, NoDoencas *a);
 void removerDeInterno(ArvoreDoencas *r, NoDoencas *a, int pos);
@@ -80,7 +79,7 @@ void combinarFilhos(ArvoreDoencas *r, NoDoencas *a, int pos);
 void DoadorDireita(ArvoreDoencas *r, NoDoencas *a, int pos);
 void DoadorEsquerda(ArvoreDoencas *r, NoDoencas *a, int pos);
 
-// Funções secundárias 
+// Funções de ajuda
 void imprimeArvore(ArvoreDoencas *r, NoDoencas *a, int h);
 void imprimeDoencas(ArvoreDoencas *r, NoDoencas *a);
 int isCheio(NoDoencas *a);
@@ -89,7 +88,7 @@ int isFolha(NoDoencas *a);
 Doenca *getDoenca(int id, ArvoreDoencas *a);
 Doenca *getChave(int id, NoDoencas *n, ArvoreDoencas *a);
 
-// As seguintes funções carregam os nós de arquivos e os mantém
+// Carga/Persistência da árvore
 ArvoreDoencas *carregaArvDoencas();
 NoDoencas *getNo(int idNo, ArvoreDoencas *a);
 void persistirArvDoencas(ArvoreDoencas *a);
