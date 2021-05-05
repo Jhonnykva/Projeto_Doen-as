@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 int lstDoencas(int argc, char **argv)
 {
     printf("Listar Doencas\n");
-    ArvoreDoencas *doencas = carregaArqArvDoencas();
+    ArvoreDoencas *doencas = carregaArvDoencas();
 
     if (doencas->nDoencas > 0)
         imprimeDoencas(doencas, getNo(doencas->raiz, doencas));
@@ -115,9 +115,9 @@ int genDoencas(int argc, char **argv)
         n = INT_MAX / 2;
     // Cria estruturas de dados
     ArvoreDoencas *aDoencas = criaArvoreDoencas();
-    THSintomas *tSintomas = criarTHSintomas(n + n / 5);
+    THSintomas *tSintomas = criarTHSintomas(-1);
 
-    int nSintomas = n, nDoencas = n;
+    int nSintomas = n <= M_THS ? n : M_THS, nDoencas = n;
     printf("Gerando %d sintomas.\n", n);
     // Gera sintomas
     Sintoma **sintomas = (Sintoma **)malloc((nSintomas - 1) * 2 * sizeof(Sintoma *));
@@ -215,7 +215,7 @@ int buscarDoenca(int argc, char **argv)
         return 1;
     }
     // Carrega árvore
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     // Busca doença
     Doenca *doenca = getDoenca(id, aDoencas);
     // Imprime doença caso exista
@@ -269,7 +269,7 @@ int buscarDoencas(int argc, char **argv)
         return 1;
     }
     // Carrega estruturas
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca sintomas
     Sintoma **sintomas = (Sintoma **)malloc(nSintomas * sizeof(Sintoma *));
@@ -377,7 +377,7 @@ int addDoenca(int argc, char **argv)
         return 1;
     }
     // Carrega estruturas
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Cria doenca
     Doenca *doenca = criaDoenca(aDoencas->nDoencas, nome, 0, NULL);
@@ -432,7 +432,7 @@ int rmDoenca(int argc, char **argv)
     }
     // Carrega estruturas
     printf("Carregando doenças...\n");
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca doença
     Doenca *doenca = getDoenca(id, aDoencas);
@@ -504,7 +504,7 @@ int addSintoma(int argc, char **argv)
     }
     // Carrega estruturas
     printf("Carregando doenças & sintomas...\n");
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca sintoma
     Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
@@ -524,6 +524,8 @@ int addSintoma(int argc, char **argv)
             adicionaSintoma(doenca, sintoma->nome);
             adicionaDoencaSintoma(sintoma, doenca->id);
         }
+        else
+            printf("Doença %d não encontrada. :(\n", doencas[i]);
     }
     // Adiciona sintoma
     inserirSintoma(tSintomas, sintoma);
@@ -564,7 +566,7 @@ int rmSintoma(int argc, char **argv)
     }
     // Carrega estruturas
     printf("Carregando doenças & sintomas...\n");
-    ArvoreDoencas *aDoencas = carregaArqArvDoencas();
+    ArvoreDoencas *aDoencas = carregaArvDoencas();
     THSintomas *tSintomas = carregaArqTHSintomas(-1);
     // Busca sintoma
     Sintoma *sintoma = getSintoma(tSintomas, nomeSintoma);
@@ -607,7 +609,7 @@ void imprimeOperacoes()
     printf("-> Remoção de uma doença\n");
     printf("\t -o rmDoenca -id <ID da doença>\n");
     printf("-> Inserção de um sintoma\n");
-    printf("\t -o addSintoma -nome \"<Nome da doença>\" -sintomas \"<Nome de sintomas separados por ',' sem espaços entre sintomas>\"\n");
+    printf("\t -o addSintoma -nome \"<Nome do sintoma>\" -doencas \"<IDs das doenças separadas por ',' sem espaços entre ids>\"\n");
     printf("-> Remoção de um sintoma\n");
     printf("\t -o rmDoenca -nome \"<Nome do sintoma>\"\n");
     printf("-> Busca de doença por ID\n");

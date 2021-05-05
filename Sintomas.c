@@ -115,9 +115,9 @@ THSintomas *criarTHSintomas(int M)
 {
     //Cria a tabela hash e retorna-a
     THSintomas *novaTabela = (THSintomas *)malloc(sizeof(THSintomas));
-    novaTabela->M = M;
+    novaTabela->M = M > 0 && M <= M_THS ? M : M_THS;
     novaTabela->N = 0;
-    novaTabela->sintomas = (Sintoma **)malloc(M * sizeof(Sintoma *));
+    novaTabela->sintomas = (Sintoma **)malloc(novaTabela->M * sizeof(Sintoma *));
     // Inicia ponteiros da lista
     for (int i = 0; i < novaTabela->M; i++)
         novaTabela->sintomas[i] = NULL;
@@ -133,7 +133,12 @@ THSintomas *criarTHSintomas(int M)
 void inserirSintoma(THSintomas *H, Sintoma *sintoma)
 {
     // Validacoes
-    if (getSintoma(H, sintoma->nome) != NULL)
+    if (sintoma == NULL || H == NULL)
+    {
+        printf("ERROR:inserirSintoma: ponteiro de Sintoma/THSintomas NULL\n");
+        exit(1);
+    }
+    else if (getSintoma(H, sintoma->nome) != NULL)
     {
         printf("Nao e possível inserir sintoma, pois este sintoma ja existe\n");
         exit(1);
@@ -151,7 +156,6 @@ void inserirSintoma(THSintomas *H, Sintoma *sintoma)
     while (H->sintomas[localInsercao] != NULL &&
            strcmp(H->sintomas[localInsercao]->nome, FLAG_SINT_RM) != 0)
         localInsercao = (localInsercao + 1) % (H->M);
-
     // Adiciona sintoma à tabela
     H->sintomas[localInsercao] = sintoma;
 #if DEBUG
@@ -273,6 +277,10 @@ Sintoma *getSintoma(THSintomas *H, char *nomeSintoma)
         printf("ERROR:getSintoma: nome de sintoma nulo. :(\n");
         exit(1);
     }
+    else if (H == NULL || H->N <= 0)
+    {
+        return NULL;
+    }
     // Obtem posicao inicial
     int fH = funcaoHashSintoma(nomeSintoma, H->M);
     // Verifica se a posicao inicial contem um ponteiro valido
@@ -353,7 +361,7 @@ THSintomas *carregaArqTHSintomas(int _M)
     FILE *arq = fopen(fName, "r");
     // Verifica se o arquivo existe
     if (arq == NULL)
-        return _M > 0 ? criarTHSintomas(_M) : NULL;
+        return criarTHSintomas(_M);
 
     // Obtem informacoes base da tabela
     int N = -1, M = -1;

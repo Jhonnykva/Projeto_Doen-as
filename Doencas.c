@@ -722,7 +722,7 @@ int isFolha(NoDoencas *a)
 Doenca *getDoenca(int id, ArvoreDoencas *a)
 {
     // Verifica validez de árvore
-    if (a == NULL)
+    if (a == NULL || a->nDoencas <= 0)
         return NULL;
     // Busca e retorna ponteiro da doenca
     return getChave(id, getNo(a->raiz, a), a);
@@ -1068,10 +1068,7 @@ ArvoreDoencas *carregaArqArvDoencas()
     FILE *arq = fopen(fName, "r");
     // Verifica se o arquivo foi aberto
     if (arq == NULL)
-    {
-        printf("ERROR:carregaArqArvDoencas: não foi possível abrir o arquivo \"%s\".\n", fName);
-        exit(1);
-    }
+        return NULL;
 
     ArvoreDoencas *a = criaArvoreDoencas();
     int t = -1;

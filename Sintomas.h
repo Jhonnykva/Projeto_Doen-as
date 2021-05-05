@@ -22,7 +22,7 @@ void liberaSintoma(Sintoma *sintoma);
 
 #define SINTOMAS_ARQ "sintomas.ths"
 #define FLAG_SINT_RM "SRM" // Bandeira de elemento eliminado
-
+#define M_THS 5000000
 typedef struct tabelaHashSintoma
 {
     Sintoma **sintomas;
