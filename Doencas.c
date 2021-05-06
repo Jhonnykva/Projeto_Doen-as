@@ -504,7 +504,7 @@ void removerDeFolha(ArvoreDoencas *r, NoDoencas *a, int pos)
     liberaDoenca(a->chaves[pos]);
     a->chaves[pos] = NULL;
     a->nChaves -= 1;
-
+    r->nDoencas -= 1;
     // Arruma ordem de chaves
     for (int i = pos + 1; i < a->nChaves + 1; ++i)
         a->chaves[i - 1] = a->chaves[i];
@@ -722,7 +722,7 @@ int isFolha(NoDoencas *a)
 Doenca *getDoenca(int id, ArvoreDoencas *a)
 {
     // Verifica validez de árvore
-    if (a == NULL || a->nDoencas <= 0)
+    if (a == NULL || a->nDoencas <= 0 || a->raiz < 0)
         return NULL;
     // Busca e retorna ponteiro da doenca
     return getChave(id, getNo(a->raiz, a), a);
